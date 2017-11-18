@@ -1,0 +1,25 @@
+{
+  "name": "elm-playground",
+  "version": "0.0.1",
+  "main": "Main.elm",
+  "repository": "https://github.com/ebiryu/elm-playground.git",
+  "author": "ebiryu <ebiryu.zatta@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "browser-sync": "^2.18.13",
+    "foreman": "^2.0.0",
+    "graceful-fs": "^4.1.11",
+    "gulp": "^3.9.1",
+    "gulp-elm": "^0.7.2",
+    "gulp-plumber": "^1.1.0",
+    "json-server": "0.9.0",
+    "minimatch": "^3.0.4",
+    "tachyons": "^4.9.0"
+  },
+  "scripts": {
+    "api": "node api.js",
+    "build": "gulp elm-bundle",
+    "client": "gulp watch",
+    "start": "nf start"
+  }
+}
