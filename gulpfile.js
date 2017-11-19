@@ -6,7 +6,7 @@ var browserSync = require('browser-sync').create();
 var paths = {
 	dist    : "dist",
 	server  : 'server',
-	copy    : ['src/index.html', 'src/**/*.js', '*.css', 'src/*.csv'],
+	copy    : ['src/index.html', 'src/**/*.js', 'src/*.css', 'src/*.csv'],
 	elm     : "src/**/*.elm",
 	elmMain : "src/Main.elm"
 };

@@ -13,6 +13,7 @@ import Task
 import Update exposing (update)
 import UrlParser as Url
 import View exposing (view)
+import Window
 
 
 main : Program Never Model Msg
@@ -36,13 +37,17 @@ init location =
     , drawerState = False
     , coordinate = Model.initLatLng
     , places = RemoteData.Loading
+    , ticket = Model.OneWay
     , toggleSearch = False
-    , searchString = ""
-    , searchResult = []
-    , selectedCityId = ""
+    , citySearch = Model.Deperture
+    , citySearchString = ""
+    , citySearchResult = []
+    , depertureSelectedCity = Model.initCity
+    , destinationSelectedCity = Model.initCity
     , cities = []
     , errMsg = ""
     , numOfPeople = { adult = 1, child = 0 }
+    , numOfPeopleShow = False
     , dateNow = dateFromFields 2017 Date.Nov 17 0 0 0 0
     , dateCheckIn = dateFromFields 2017 Date.Nov 17 0 0 0 0
     , dateCheckOut = dateFromFields 2017 Date.Nov 18 0 0 0 0
@@ -51,8 +56,9 @@ init location =
     , searchConditionNumber = 0
     , searchConditionStyle =
         Model.initStyleOfConditions
+    , windowWidth = 0
     }
-        ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now ]
+        ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]
 
 
 
@@ -61,8 +67,11 @@ init location =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Animation.subscription Animate
-        [ model.searchConditionStyle.searchFormView
-        , model.searchConditionStyle.howManyPeopleView
-        , model.searchConditionStyle.datePickerView
+    Sub.batch
+        [ Animation.subscription Animate
+            [ model.searchConditionStyle.searchFormView
+            , model.searchConditionStyle.howManyPeopleView
+            , model.searchConditionStyle.datePickerView
+            ]
+        , Window.resizes WindowWidth
         ]

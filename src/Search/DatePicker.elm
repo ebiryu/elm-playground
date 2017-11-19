@@ -15,7 +15,7 @@ import Search.DatePickerUpdate exposing (Check(..), Model, Msg(..))
 
 
 view model =
-    div [ class "absolute absolute--fill bg-black-50 z2" ]
+    div [ class "absolute absolute--fill bg-black-50 z2 fixed" ]
         [ div [ class "absolute absolute--fill", onClick (ToggleDatePicker model.check) ] []
         , div
             [ class "absolute absolute--fill ma-auto bg-white-10 shadow-2"
@@ -38,10 +38,10 @@ header model =
         [ div [ class "db ml3 pv2 light-gray" ] <|
             case model.check of
                 CheckIn ->
-                    [ text "チェックイン" ]
+                    [ text "往路" ]
 
                 CheckOut ->
-                    [ text "チェックアウト" ]
+                    [ text "復路" ]
         , div [ class "db ml3 silver" ]
             [ text <| toString <| Date.year model.date ]
         , div [ class "db ml3 f2 near-white" ] [ text (DateFormat.format config "%b/%-d (%a)" model.date) ]

@@ -2,6 +2,8 @@ module View exposing (..)
 
 -- import MapboxAccessToken exposing (mapboxToken)
 
+import Date.Extra.Config.Config_ja_jp exposing (config)
+import Date.Extra.Format as DateFormat
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -9,32 +11,39 @@ import Json.Decode as Decode
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import RemoteData
+import Search.DatePicker
+import Search.DatePickerUpdate exposing (Check(..))
 import Search.View as Search
 import Style as Style
 
 
 view : Model -> Html Msg
 view model =
-    if model.toggleSearch then
-        Search.view model
-    else
-        div
-            (case model.drawerState of
-                True ->
-                    [ onClick ToggleDrawer ]
+    div
+        (case model.drawerState of
+            True ->
+                [ onClick ToggleDrawer ]
 
-                False ->
-                    []
-            )
-            [ header_ model
-            , mainView model
-            ]
+            False ->
+                [ class "relative" ]
+        )
+        [ header_ model
+        , mainView model
+        , if model.toggleSearch then
+            Search.searchFormView model
+          else if model.datePickerShow then
+            Search.DatePicker.view model.datePickerModel
+          else if model.numOfPeopleShow then
+            Search.howManyPeopleView model
+          else
+            text ""
+        ]
 
 
 header_ : Model -> Html Msg
 header_ model =
     -- header [ style Style.header ]
-    header [ class "flex items-center bg-blue h3 shadow-2" ]
+    header [ class "flex items-center bg-navy h3 shadow-2" ]
         [ a
             (case model.drawerState of
                 True ->
@@ -50,11 +59,11 @@ header_ model =
             ]
         , a [ class "link white f2", href "#" ] [ text "elm-sample-spa" ]
         , div [ class "ml-auto mr2 flex" ]
-            (List.map viewLinkTab [ "birds", "cats", "dogs", "map" ])
+            (List.map viewLinkTab [ "birds", "cats", "dogs", "map", "history" ])
         , case model.drawerState of
             True ->
                 ul [ style Style.drawer ]
-                    (List.map viewLink [ "birds", "cats", "dogs", "map" ])
+                    (List.map viewLink [ "birds", "cats", "dogs", "map", "history" ])
 
             False ->
                 span [] []
@@ -63,10 +72,13 @@ header_ model =
 
 mainView : Model -> Html Msg
 mainView model =
-    div [ style Style.boxed ]
+    div []
         [ case model.currentRoute of
             Just Home ->
-                homeView model
+                if model.windowWidth < 550 then
+                    homeMinimalView model
+                else
+                    homeView model
 
             Just Birds ->
                 animalView "birds" "have wings and a beak"
@@ -80,6 +92,9 @@ mainView model =
             Just Map ->
                 mapView model
 
+            Just History ->
+                historyView model
+
             Nothing ->
                 notFoundView
         ]
@@ -87,13 +102,11 @@ mainView model =
 
 homeView : Model -> Html Msg
 homeView model =
-    div []
-        [ h1 [] [ text "History" ]
-        , ul [] (List.map viewRoute (List.reverse model.history))
-        , h1 [] [ text "Search" ]
+    div [ style Style.boxed ]
+        [ h1 [] [ text "Search" ]
         , div
-            [ class "button-reset near-white bg-near-black inline-flex items-center ma2 tc bn br2 pa2 pointer"
-            , onClick ToggleSearch
+            [ class "near-white bg-near-black inline-flex items-center ma2 tc bn br2 pa2 pointer"
+            , onClick (ToggleSearch Model.Deperture)
             ]
             [ i [ class "material-icons dib h2 w2 md-36" ] [ text "search" ]
             , span [ class "f6 ml3 pr2" ] [ text "Search" ]
@@ -101,16 +114,95 @@ homeView model =
         ]
 
 
+homeMinimalView : Model -> Html Msg
+homeMinimalView model =
+    div []
+        [ h1 [ class "center w-90 f3" ] [ text "場所と日付を選択" ]
+        , div [ class "center w-90" ]
+            [ div [ class "ml2" ]
+                [ div
+                    [ class "dib mh2 pv2 ph3 bt bl br bw1 br--top br2 pointer"
+                    , classList [ ( "bg-navy b--navy white", model.ticket == Model.OneWay ) ]
+                    , onClick OneWay
+                    ]
+                    [ text "片道" ]
+                , div
+                    [ class "dib mh2 pv2 ph3 bt bl br bw1 br--top br2 pointer"
+                    , classList [ ( "bg-navy b--navy white", model.ticket == Model.RoundTrip ) ]
+                    , onClick RoundTrip
+                    ]
+                    [ text "往復" ]
+                ]
+            , div [ class "pa2 br2 ba bw1 b--navy bg-navy shadow-2" ]
+                [ searchPlaceButton "from:" model.depertureSelectedCity Model.Deperture
+                , searchPlaceButton "to:" model.destinationSelectedCity Model.Destination
+                , div [ class "flex justify-between" ] <|
+                    List.concat
+                        [ case model.ticket of
+                            Model.OneWay ->
+                                [ div
+                                    [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
+                                    , style [ ( "width", "48%" ) ]
+                                    , onClick (ToggleDatePicker CheckIn)
+                                    ]
+                                    [ text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn) ]
+                                ]
+
+                            Model.RoundTrip ->
+                                [ div
+                                    [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
+                                    , style [ ( "width", "24%" ) ]
+                                    , onClick (ToggleDatePicker CheckIn)
+                                    ]
+                                    [ text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn) ]
+                                , div
+                                    [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
+                                    , style [ ( "width", "24%" ) ]
+                                    , onClick (ToggleDatePicker CheckOut)
+                                    ]
+                                    [ text (DateFormat.format config "%b/%-d (%a)" model.dateCheckOut) ]
+                                ]
+                        , [ div
+                                [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
+                                , style [ ( "width", "48%" ) ]
+                                , onClick ToggleNumOfPeople
+                                ]
+                                [ text "大人: "
+                                , text <| toString model.numOfPeople.adult
+                                , text "人, 子供: "
+                                , text <| toString model.numOfPeople.child
+                                , text "人"
+                                ]
+                          ]
+                        ]
+                , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer" ] [ text "検索" ]
+                ]
+            ]
+        ]
+
+
+searchPlaceButton string city depDest =
+    div [ class "silver bg-nearwhite br2 mv2 pa2 w-100 bg-near-white pointer shadow-1", onClick (ToggleSearch depDest) ]
+        [ span [ class "f5" ]
+            [ text string
+            , text " "
+            , text city.city
+            ]
+        ]
+
+
+historyView : Model -> Html Msg
+historyView model =
+    div []
+        [ h1 [] [ text "History" ]
+        , ul [] (List.map viewRoute (List.reverse model.history))
+        ]
+
+
 mapView : Model -> Html Msg
 mapView model =
     div []
-        [ mapboxWC model
-        , div []
-            [ text <| toString model.coordinate.latitude
-            , text " "
-            , text <| toString model.coordinate.longitude
-            ]
-        , case model.places of
+        [ case model.places of
             RemoteData.NotAsked ->
                 text ""
 
@@ -123,34 +215,6 @@ mapView model =
             RemoteData.Failure error ->
                 text (toString error)
         ]
-
-
-mapboxWC : Model -> Html Msg
-mapboxWC model =
-    node "mapbox-gl"
-        [ attribute "map" "{{map}}"
-        , attribute "script-src" "https://api.mapbox.com/mapbox-gl-js/v0.32.1/mapbox-gl.js"
-
-        -- , attribute "access-token" mapboxToken
-        , attribute "latitude" (toString model.coordinate.latitude)
-        , attribute "longitude" (toString model.coordinate.longitude)
-        , attribute "zoom" (toString 13)
-        , latitudeChange model
-        , longitudeChange model
-        ]
-        []
-
-
-latitudeChange : Model -> Attribute Msg
-latitudeChange model =
-    on "latitude-changed" <|
-        Decode.map SetLatitude (Decode.at [ "target", "latitude" ] Decode.float)
-
-
-longitudeChange : Model -> Attribute Msg
-longitudeChange model =
-    on "longitude-changed" <|
-        Decode.map SetLongitude (Decode.at [ "target", "longitude" ] Decode.float)
 
 
 listPlaces : List Model.Place -> Html Msg

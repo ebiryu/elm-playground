@@ -25,6 +25,7 @@ route =
         , Url.map Cats (Url.s "cats")
         , Url.map Dogs (Url.s "dogs")
         , Url.map Map (Url.s "map")
+        , Url.map History (Url.s "history")
         ]
 
 
@@ -61,18 +62,29 @@ update msg model =
         OnFetchPlaces response ->
             { model | places = response } ! []
 
-        ToggleSearch ->
-            { model | toggleSearch = not model.toggleSearch, searchConditionStyle = Model.initStyleOfConditions }
+        OneWay ->
+            { model | ticket = Model.OneWay } ! []
+
+        RoundTrip ->
+            { model | ticket = Model.RoundTrip } ! []
+
+        ToggleSearch depOrDest ->
+            { model | toggleSearch = not model.toggleSearch, citySearch = depOrDest, citySearchResult = [], searchConditionStyle = Model.initStyleOfConditions }
                 ! [ Task.attempt FocusOnInput (Dom.focus "search-place") ]
 
         FocusOnInput id ->
             ( model, Cmd.none )
 
         StartSearching string ->
-            { model | searchString = string, searchResult = Search.runFilter2 string model.cities } ! []
+            { model | citySearchString = string, citySearchResult = Search.runFilter2 string model.cities } ! []
 
-        SelectCityId id ->
-            { model | selectedCityId = id } ! []
+        SelectCity city depDest ->
+            case depDest of
+                Model.Deperture ->
+                    update (ToggleSearch model.citySearch) { model | depertureSelectedCity = city }
+
+                Model.Destination ->
+                    update (ToggleSearch model.citySearch) { model | destinationSelectedCity = city }
 
         GetCityList (Ok cities) ->
             { model | cities = Commands.runCsvDecoder cities } ! []
@@ -81,7 +93,7 @@ update msg model =
             ( { model | errMsg = toString err }, Cmd.none )
 
         SelectNumOfPeople adult child ->
-            { model | numOfPeople = { adult = adult, child = child } } ! []
+            update ToggleNumOfPeople { model | numOfPeople = { adult = adult, child = child } }
 
         SetNumOfAdult adult ->
             { model
@@ -100,6 +112,9 @@ update msg model =
                     }
             }
                 ! []
+
+        ToggleNumOfPeople ->
+            { model | numOfPeopleShow = not model.numOfPeopleShow } ! []
 
         DateNow date ->
             { model
@@ -203,6 +218,9 @@ update msg model =
                     }
             }
                 ! []
+
+        WindowWidth size ->
+            { model | windowWidth = size.width } ! []
 
 
 easing =

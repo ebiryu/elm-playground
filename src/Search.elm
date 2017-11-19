@@ -23,7 +23,7 @@ runFilter string placesData =
             [ ( "", toString error ) ]
 
 
-runFilter2 : String -> List City -> List ( Model.CityId, String )
+runFilter2 : String -> List City -> List City
 runFilter2 string cities =
     if string == "" then
         []
@@ -37,7 +37,6 @@ filtering string places =
         |> List.filter (\( _, p ) -> String.contains string p)
 
 
-filtering2 : String -> List City -> List ( Model.CityId, String )
+filtering2 : String -> List City -> List City
 filtering2 string cities =
-    List.map (\p -> ( p.id, p.city )) cities
-        |> List.filter (\( _, p ) -> String.contains string p)
+    List.filter (\city -> String.contains string city.city || String.contains string city.city_kana) cities

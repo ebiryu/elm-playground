@@ -13,13 +13,17 @@ type alias Model =
     , drawerState : Bool
     , coordinate : LatLng
     , places : Places
+    , ticket : Ticket
     , toggleSearch : Bool
-    , searchString : String
-    , searchResult : List ( CityId, String )
-    , selectedCityId : CityId
+    , citySearch : DepOrDest
+    , citySearchString : String
+    , citySearchResult : List City
+    , depertureSelectedCity : City
+    , destinationSelectedCity : City
     , cities : List City
     , errMsg : String
     , numOfPeople : NumOfPeople
+    , numOfPeopleShow : Bool
     , dateNow : Date
     , dateCheckIn : Date
     , dateCheckOut : Date
@@ -27,7 +31,18 @@ type alias Model =
     , datePickerShow : Bool
     , searchConditionNumber : Int
     , searchConditionStyle : StyleOfConditions
+    , windowWidth : Int
     }
+
+
+type Ticket
+    = OneWay
+    | RoundTrip
+
+
+type DepOrDest
+    = Deperture
+    | Destination
 
 
 type alias LatLng =
@@ -63,6 +78,7 @@ type Route
     | Cats
     | Dogs
     | Map
+    | History
 
 
 type alias City =
@@ -71,6 +87,15 @@ type alias City =
     , city : String
     , prefecture_kana : String
     , city_kana : String
+    }
+
+
+initCity =
+    { id = ""
+    , prefecture = ""
+    , city = ""
+    , prefecture_kana = ""
+    , city_kana = ""
     }
 
 

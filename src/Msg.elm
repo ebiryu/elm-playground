@@ -9,6 +9,7 @@ import Model exposing (Place)
 import Navigation
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
+import Window exposing (Size)
 
 
 type Msg
@@ -18,14 +19,17 @@ type Msg
     | SetLatitude Float
     | SetLongitude Float
     | OnFetchPlaces (WebData (List Place))
-    | ToggleSearch
+    | OneWay
+    | RoundTrip
+    | ToggleSearch Model.DepOrDest
     | StartSearching String
     | FocusOnInput (Result Dom.Error ())
-    | SelectCityId String
+    | SelectCity Model.City Model.DepOrDest
     | GetCityList (Result Http.Error String)
     | SelectNumOfPeople Int Int
     | SetNumOfAdult String
     | SetNumOfChild String
+    | ToggleNumOfPeople
     | DateNow Date.Date
     | DatePickerMsg DatePicker.Msg DatePicker.Check
     | ToggleDatePicker DatePicker.Check
@@ -34,3 +38,4 @@ type Msg
     | NextCondition2
     | BeforeCondition2
     | Animate Animation.Msg
+    | WindowWidth Size
