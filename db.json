@@ -42,5 +42,23 @@
       "latitude": 38.2721,
       "longitude": 140.8594
     }
+  ],
+  "buses": [
+    {
+      "id":"1",
+      "name": "その1",
+      "depPrefecture": "東京",
+      "depDate": "20 Nov 2017 09:00:00 +0900",
+      "destPrefecture": "宮城",
+      "amount": "5,000"
+    },
+    {
+      "id":"2",
+      "name": "その2",
+      "depPrefecture": "宮城",
+      "depDate": "21 Nov 2017 09:00:00 +0900",
+      "destPrefecture": "東京",
+      "amount": 4500
+    }
   ]
 }
