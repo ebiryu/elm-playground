@@ -33,6 +33,8 @@ type Msg
     | DateNow Date.Date
     | DatePickerMsg DatePicker.Msg DatePicker.Check
     | ToggleDatePicker DatePicker.Check
+    | OnFetchBuses (WebData (List Model.Bus))
+    | SubmitSearch
     | NextCondition1
     | BeforeCondition1
     | NextCondition2

@@ -53,6 +53,7 @@ init location =
     , dateCheckOut = dateFromFields 2017 Date.Nov 18 0 0 0 0
     , datePickerModel = DatePicker.initDatePicker (dateFromFields 2017 Date.Nov 18 0 0 0 0)
     , datePickerShow = False
+    , buses = RemoteData.NotAsked
     , searchConditionNumber = 0
     , searchConditionStyle =
         Model.initStyleOfConditions

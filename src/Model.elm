@@ -29,6 +29,7 @@ type alias Model =
     , dateCheckOut : Date
     , datePickerModel : DatePicker.Model
     , datePickerShow : Bool
+    , buses : WebData (List Bus)
     , searchConditionNumber : Int
     , searchConditionStyle : StyleOfConditions
     , windowWidth : Int
@@ -106,6 +107,16 @@ type alias CityId =
 type alias NumOfPeople =
     { adult : Int
     , child : Int
+    }
+
+
+type alias Bus =
+    { id : String
+    , name : String
+    , depPrefecture : String
+    , depDate : String
+    , destPrefecture : String
+    , amount : Int
     }
 
 

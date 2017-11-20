@@ -157,6 +157,12 @@ update msg model =
             in
             { model | datePickerShow = not model.datePickerShow, datePickerModel = newModel } ! []
 
+        OnFetchBuses response ->
+            { model | buses = response } ! []
+
+        SubmitSearch ->
+            ( model, Commands.fetchBuses )
+
         NextCondition1 ->
             let
                 oldStyle =

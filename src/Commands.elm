@@ -36,6 +36,28 @@ placeDecoder =
         |> required "longitude" Decode.float
 
 
+fetchBuses : Cmd Msg
+fetchBuses =
+    Http.get "http://localhost:4000/buses" busesDecoder
+        |> RemoteData.sendRequest
+        |> Cmd.map Msg.OnFetchBuses
+
+
+busesDecoder : Decode.Decoder (List Model.Bus)
+busesDecoder =
+    Decode.list busDecoder
+
+
+busDecoder =
+    decode Model.Bus
+        |> required "id" Decode.string
+        |> required "name" Decode.string
+        |> required "depPrefecture" Decode.string
+        |> required "depDate" Decode.string
+        |> required "destPrefecture" Decode.string
+        |> required "amount" Decode.int
+
+
 fetchCityList : Cmd Msg
 fetchCityList =
     Http.send Msg.GetCityList <|

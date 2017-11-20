@@ -175,12 +175,14 @@ homeMinimalView model =
                                 ]
                           ]
                         ]
-                , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer" ] [ text "検索" ]
+                , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer", onClick SubmitSearch ] [ text "検索" ]
                 ]
+            , searchResultBusList model.buses
             ]
         ]
 
 
+searchPlaceButton : String -> Model.City -> Model.DepOrDest -> Html Msg
 searchPlaceButton string city depDest =
     div [ class "silver bg-nearwhite br2 mv2 pa2 w-100 bg-near-white pointer shadow-1", onClick (ToggleSearch depDest) ]
         [ span [ class "f5" ]
@@ -189,6 +191,26 @@ searchPlaceButton string city depDest =
             , text city.city
             ]
         ]
+
+
+searchResultBusList : RemoteData.WebData (List Model.Bus) -> Html Msg
+searchResultBusList buses =
+    case buses of
+        RemoteData.NotAsked ->
+            div [] []
+
+        RemoteData.Loading ->
+            div [] []
+
+        RemoteData.Success buses ->
+            let
+                list bus =
+                    div [] [ text bus.name ]
+            in
+            div [] (List.map list buses)
+
+        RemoteData.Failure error ->
+            div [] []
 
 
 historyView : Model -> Html Msg
