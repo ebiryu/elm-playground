@@ -52,9 +52,11 @@ busDecoder =
     decode Model.Bus
         |> required "id" Decode.string
         |> required "name" Decode.string
+        |> required "companyName" Decode.string
         |> required "depPrefecture" Decode.string
         |> required "depDate" Decode.string
         |> required "destPrefecture" Decode.string
+        |> required "destDate" Decode.string
         |> required "amount" Decode.int
 
 

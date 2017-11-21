@@ -113,9 +113,11 @@ type alias NumOfPeople =
 type alias Bus =
     { id : String
     , name : String
+    , companyName : String
     , depPrefecture : String
     , depDate : String
     , destPrefecture : String
+    , destDate : String
     , amount : Int
     }
 

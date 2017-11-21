@@ -2,6 +2,7 @@ module View exposing (..)
 
 -- import MapboxAccessToken exposing (mapboxToken)
 
+import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
 import Html exposing (..)
@@ -177,7 +178,7 @@ homeMinimalView model =
                         ]
                 , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer", onClick SubmitSearch ] [ text "検索" ]
                 ]
-            , searchResultBusList model.buses
+            , searchResultBusList model
             ]
         ]
 
@@ -193,21 +194,46 @@ searchPlaceButton string city depDest =
         ]
 
 
-searchResultBusList : RemoteData.WebData (List Model.Bus) -> Html Msg
-searchResultBusList buses =
-    case buses of
+searchResultBusList : Model -> Html Msg
+searchResultBusList model =
+    case model.buses of
         RemoteData.NotAsked ->
             div [] []
 
         RemoteData.Loading ->
-            div [] []
+            div [] [ text "Now loading ..." ]
 
         RemoteData.Success buses ->
             let
                 list bus =
-                    div [] [ text bus.name ]
+                    div [ class "ba b--silver br3 pa3 mv3 hover-bg-black-10" ]
+                        [ div [ class "f3" ] [ text bus.companyName ]
+                        , div [] [ text bus.name ]
+                        , div [] [ text <| "￥" ++ toString bus.amount ]
+                        , div [ class "mt2" ]
+                            [ div [ class "dib" ]
+                                [ div [] [ text bus.depPrefecture ]
+                                , div []
+                                    [ text <|
+                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
+                                            Result.withDefault model.dateCheckIn <|
+                                                Date.fromString bus.depDate
+                                    ]
+                                ]
+                            , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
+                            , div [ class "dib" ]
+                                [ div [] [ text bus.destPrefecture ]
+                                , div []
+                                    [ text <|
+                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
+                                            Result.withDefault model.dateCheckIn <|
+                                                Date.fromString bus.destDate
+                                    ]
+                                ]
+                            ]
+                        ]
             in
-            div [] (List.map list buses)
+            div [ class "mt3 navy" ] (List.map list buses)
 
         RemoteData.Failure error ->
             div [] []
