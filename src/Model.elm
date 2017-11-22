@@ -119,6 +119,7 @@ type alias Bus =
     , destPrefecture : String
     , destDate : String
     , amount : Int
+    , vacancy : Int
     }
 
 

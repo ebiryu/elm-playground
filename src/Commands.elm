@@ -58,6 +58,7 @@ busDecoder =
         |> required "destPrefecture" Decode.string
         |> required "destDate" Decode.string
         |> required "amount" Decode.int
+        |> required "vacancy" Decode.int
 
 
 fetchCityList : Cmd Msg

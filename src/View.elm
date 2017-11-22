@@ -104,14 +104,11 @@ mainView model =
 homeView : Model -> Html Msg
 homeView model =
     div [ style Style.boxed ]
-        [ h1 [] [ text "Search" ]
-        , div
-            [ class "near-white bg-near-black inline-flex items-center ma2 tc bn br2 pa2 pointer"
-            , onClick (ToggleSearch Model.Deperture)
+        [ div
+            [ class "center"
+            , style [ ( "width", "500px" ) ]
             ]
-            [ i [ class "material-icons dib h2 w2 md-36" ] [ text "search" ]
-            , span [ class "f6 ml3 pr2" ] [ text "Search" ]
-            ]
+            [ homeMinimalView model ]
         ]
 
 
@@ -209,7 +206,7 @@ searchResultBusList model =
                     div [ class "ba b--silver br3 pa3 mv3 hover-bg-black-10" ]
                         [ div [ class "f3" ] [ text bus.companyName ]
                         , div [] [ text bus.name ]
-                        , div [] [ text <| "￥" ++ toString bus.amount ]
+                        , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ toString bus.vacancy ]
                         , div [ class "mt2" ]
                             [ div [ class "dib" ]
                                 [ div [] [ text bus.depPrefecture ]

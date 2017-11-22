@@ -52,7 +52,8 @@
       "depDate": "20 Nov 2017 09:00:00 +0900",
       "destPrefecture": "宮城",
       "destDate": "20 Nov 2017 15:00:00 +0900",
-      "amount": 5000
+      "amount": 5000,
+      "vacancy": 5
     },
     {
       "id":"2",
@@ -62,7 +63,8 @@
       "depDate": "21 Nov 2017 09:00:00 +0900",
       "destPrefecture": "東京",
       "destDate": "22 Nov 2017 15:00:00 +0900",
-      "amount": 4500
+      "amount": 4500,
+      "vacancy": 4
     }
   ]
 }
