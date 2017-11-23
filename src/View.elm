@@ -2,6 +2,7 @@ module View exposing (..)
 
 -- import MapboxAccessToken exposing (mapboxToken)
 
+import Animation
 import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
@@ -23,10 +24,10 @@ view model =
     div
         (case model.drawerState of
             True ->
-                [ onClick ToggleDrawer ]
+                [ onClick (ToggleDrawer model.drawerState) ]
 
             False ->
-                [ class "relative" ]
+                []
         )
         [ header_ model
         , mainView model
@@ -51,7 +52,7 @@ header_ model =
                     []
 
                 False ->
-                    [ onClick ToggleDrawer ]
+                    [ onClick (ToggleDrawer model.drawerState) ]
             )
             [ i
                 [ class "white ma2 material-icons md-36 pointer"
@@ -63,8 +64,7 @@ header_ model =
             (List.map viewLinkTab [ "birds", "cats", "dogs", "map", "history" ])
         , case model.drawerState of
             True ->
-                ul [ style Style.drawer ]
-                    (List.map viewLink [ "birds", "cats", "dogs", "map", "history" ])
+                drawerView model
 
             False ->
                 span [] []
@@ -303,6 +303,20 @@ viewLinkTab name =
     span [ class "dim h2 w3 dn dib-l" ]
         [ a [ href ("#" ++ name), class "link flex justify-center items-center h2 mr1 ml1 white ba br3 bw1 b--white" ]
             [ span [] [ text name ] ]
+        ]
+
+
+drawerView : Model -> Html Msg
+drawerView model =
+    div [ class "absolute absolute--fill bg-black-50 z2" ]
+        [ div
+            (List.concat
+                [ Animation.render model.drawerPosition
+                , [ class "absolute left-0 top-0 w5 vh-100 bg-near-white z3" ]
+                ]
+            )
+            [ ul [] (List.map viewLink [ "birds", "cats", "dogs", "map", "history" ])
+            ]
         ]
 
 

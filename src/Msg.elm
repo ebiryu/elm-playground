@@ -14,7 +14,7 @@ import Window exposing (Size)
 
 type Msg
     = UrlChange Navigation.Location
-    | ToggleDrawer
+    | ToggleDrawer Bool
     | SetLatLng Float Float
     | SetLatitude Float
     | SetLongitude Float

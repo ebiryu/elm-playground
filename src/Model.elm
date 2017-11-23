@@ -32,6 +32,7 @@ type alias Model =
     , buses : WebData (List Bus)
     , searchConditionNumber : Int
     , searchConditionStyle : StyleOfConditions
+    , drawerPosition : Animation.State
     , windowWidth : Int
     }
 
@@ -149,3 +150,9 @@ initStyleOfConditions =
             , Animation.display Animation.none
             ]
     }
+
+
+initDrawerPosition =
+    Animation.style
+        [ Animation.left (Animation.rem -16)
+        ]

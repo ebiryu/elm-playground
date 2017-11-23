@@ -47,8 +47,11 @@ update msg model =
             }
                 ! []
 
-        ToggleDrawer ->
-            { model | drawerState = not model.drawerState } ! []
+        ToggleDrawer bool ->
+            if bool then
+                { model | drawerState = False, drawerPosition = drawerSliceOut model.drawerPosition } ! []
+            else
+                { model | drawerState = True, drawerPosition = drawerSliceIn model.drawerPosition } ! []
 
         SetLatLng lat long ->
             { model | coordinate = { latitude = lat, longitude = long } } ! []
@@ -222,6 +225,7 @@ update msg model =
                     , howManyPeopleView = Animation.update animMsg model.searchConditionStyle.howManyPeopleView
                     , datePickerView = Animation.update animMsg model.searchConditionStyle.datePickerView
                     }
+                , drawerPosition = Animation.update animMsg model.drawerPosition
             }
                 ! []
 
@@ -232,8 +236,8 @@ update msg model =
 easing =
     let
         params =
-            { duration = 0.15 * Time.second
-            , ease = Ease.outQuart
+            { duration = 0.2 * Time.second
+            , ease = Ease.outCubic
             }
     in
     Animation.easing params
@@ -266,3 +270,11 @@ fadeIn view =
                 , Animation.opacity 1.0
                 ]
             ]
+
+
+drawerSliceIn style =
+    Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem 0) ] ] style
+
+
+drawerSliceOut style =
+    Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem -16) ] ] style

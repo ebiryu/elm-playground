@@ -57,6 +57,7 @@ init location =
     , searchConditionNumber = 0
     , searchConditionStyle =
         Model.initStyleOfConditions
+    , drawerPosition = Model.initDrawerPosition
     , windowWidth = 0
     }
         ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]
@@ -70,7 +71,8 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ Animation.subscription Animate
-            [ model.searchConditionStyle.searchFormView
+            [ model.drawerPosition
+            , model.searchConditionStyle.searchFormView
             , model.searchConditionStyle.howManyPeopleView
             , model.searchConditionStyle.datePickerView
             ]
