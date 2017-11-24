@@ -35,9 +35,5 @@ type Msg
     | ToggleDatePicker DatePicker.Check
     | OnFetchBuses (WebData (List Model.Bus))
     | SubmitSearch
-    | NextCondition1
-    | BeforeCondition1
-    | NextCondition2
-    | BeforeCondition2
     | Animate Animation.Msg
     | WindowWidth Size

@@ -54,9 +54,6 @@ init location =
     , datePickerModel = DatePicker.initDatePicker (dateFromFields 2017 Date.Nov 18 0 0 0 0)
     , datePickerShow = False
     , buses = RemoteData.NotAsked
-    , searchConditionNumber = 0
-    , searchConditionStyle =
-        Model.initStyleOfConditions
     , drawerPosition = Model.initDrawerPosition
     , windowWidth = 0
     }
@@ -72,9 +69,6 @@ subscriptions model =
     Sub.batch
         [ Animation.subscription Animate
             [ model.drawerPosition
-            , model.searchConditionStyle.searchFormView
-            , model.searchConditionStyle.howManyPeopleView
-            , model.searchConditionStyle.datePickerView
             ]
         , Window.resizes WindowWidth
         ]

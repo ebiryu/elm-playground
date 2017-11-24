@@ -20,7 +20,6 @@ view model =
             ]
             [ searchFormView model
             , howManyPeopleView model
-            , datePickerView model
             ]
         , if model.datePickerShow then
             Search.DatePicker.view model.datePickerModel
@@ -175,50 +174,3 @@ howManyPeopleView model =
 
 numOfPeopleButtonClass =
     "dib w4 h4 ba br2 b--white tc ma1 bg-black-10 pointer v-top shadow-1"
-
-
-datePickerView : Model -> Html Msg
-datePickerView model =
-    div
-        (List.concat
-            [ Animation.render model.searchConditionStyle.datePickerView
-            , [ class (inlineClass ++ " bg-blue") ]
-            ]
-        )
-        [ div [ class "f3 mb2 white" ] [ text "日時" ]
-        , div
-            [ class "w-100 h-75 center" ]
-            [ div [ class "tc" ]
-                [ div
-                    [ class "dib w5 f6 f5-l white pa2 ba br2 b--white ma1 hover-bg-white-20 pointer"
-                    , onClick (ToggleDatePicker CheckIn)
-                    ]
-                    [ text "チェックイン: "
-                    , text (toString model.dateCheckIn)
-                    ]
-                , div
-                    [ class "dib w5 f6 f5-l white pa2 ba br2 b--white ma1 hover-bg-white-20 pointer"
-                    , onClick (ToggleDatePicker CheckOut)
-                    ]
-                    [ text "チェックアウト: "
-                    , text (toString model.dateCheckOut)
-                    ]
-                ]
-            ]
-        , div
-            [ class "center absolute left-0 right-0 bottom-1"
-            , style [ ( "width", "7rem" ), ( "height", "3rem" ) ]
-            ]
-            [ div
-                [ class "dib mh1 br4 bg-white-10 shadow-1 pointer"
-                , style [ ( "width", "3rem" ), ( "height", "3rem" ) ]
-                , onClick BeforeCondition2
-                ]
-                [ i [ class "material-icons md-48 white" ] [ text "navigate_before" ] ]
-            , div
-                [ class "dib mh1 br4 bg-white-10 shadow-1 pointer"
-                , style [ ( "width", "3rem" ), ( "height", "3rem" ) ]
-                ]
-                [ i [ class "material-icons md-48 white" ] [ text "navigate_next" ] ]
-            ]
-        ]

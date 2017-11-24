@@ -21,14 +21,7 @@ import Style as Style
 
 view : Model -> Html Msg
 view model =
-    div
-        (case model.drawerState of
-            True ->
-                [ onClick (ToggleDrawer model.drawerState) ]
-
-            False ->
-                []
-        )
+    div []
         [ header_ model
         , mainView model
         , if model.toggleSearch then
@@ -309,7 +302,8 @@ viewLinkTab name =
 drawerView : Model -> Html Msg
 drawerView model =
     div [ class "absolute absolute--fill bg-black-50 z2" ]
-        [ div
+        [ div [ class "absolute absolute--fill", onClick (ToggleDrawer model.drawerState) ] []
+        , div
             (List.concat
                 [ Animation.render model.drawerPosition
                 , [ class "absolute left-0 top-0 w5 vh-100 bg-near-white z3" ]

@@ -30,8 +30,6 @@ type alias Model =
     , datePickerModel : DatePicker.Model
     , datePickerShow : Bool
     , buses : WebData (List Bus)
-    , searchConditionNumber : Int
-    , searchConditionStyle : StyleOfConditions
     , drawerPosition : Animation.State
     , windowWidth : Int
     }
@@ -128,27 +126,6 @@ type alias StyleOfConditions =
     { searchFormView : Animation.State
     , howManyPeopleView : Animation.State
     , datePickerView : Animation.State
-    }
-
-
-initStyleOfConditions =
-    { searchFormView =
-        Animation.style
-            [ Animation.translate (px 0.0) (px 0.0)
-            , Animation.opacity 1.0
-            ]
-    , howManyPeopleView =
-        Animation.style
-            [ Animation.translate (px 50.0) (px 0.0)
-            , Animation.opacity 0.0
-            , Animation.display Animation.none
-            ]
-    , datePickerView =
-        Animation.style
-            [ Animation.translate (px 50.0) (px 0.0)
-            , Animation.opacity 0.0
-            , Animation.display Animation.none
-            ]
     }
 
 

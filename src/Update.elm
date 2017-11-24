@@ -72,7 +72,7 @@ update msg model =
             { model | ticket = Model.RoundTrip } ! []
 
         ToggleSearch depOrDest ->
-            { model | toggleSearch = not model.toggleSearch, citySearch = depOrDest, citySearchResult = [], searchConditionStyle = Model.initStyleOfConditions }
+            { model | toggleSearch = not model.toggleSearch, citySearch = depOrDest, citySearchResult = [] }
                 ! [ Task.attempt FocusOnInput (Dom.focus "search-place") ]
 
         FocusOnInput id ->
@@ -166,66 +166,9 @@ update msg model =
         SubmitSearch ->
             ( model, Commands.fetchBuses )
 
-        NextCondition1 ->
-            let
-                oldStyle =
-                    model.searchConditionStyle
-
-                newStyle =
-                    { oldStyle
-                        | searchFormView = fadeOutNext oldStyle.searchFormView
-                        , howManyPeopleView = fadeIn oldStyle.howManyPeopleView
-                    }
-            in
-            ( { model | searchConditionStyle = newStyle }, Cmd.none )
-
-        BeforeCondition1 ->
-            let
-                oldStyle =
-                    model.searchConditionStyle
-
-                newStyle =
-                    { oldStyle
-                        | searchFormView = fadeIn oldStyle.searchFormView
-                        , howManyPeopleView = fadeOutBefore oldStyle.howManyPeopleView
-                    }
-            in
-            ( { model | searchConditionStyle = newStyle }, Cmd.none )
-
-        NextCondition2 ->
-            let
-                oldStyle =
-                    model.searchConditionStyle
-
-                newStyle =
-                    { oldStyle
-                        | howManyPeopleView = fadeOutNext oldStyle.howManyPeopleView
-                        , datePickerView = fadeIn oldStyle.datePickerView
-                    }
-            in
-            ( { model | searchConditionStyle = newStyle }, Cmd.none )
-
-        BeforeCondition2 ->
-            let
-                oldStyle =
-                    model.searchConditionStyle
-
-                newStyle =
-                    { oldStyle
-                        | howManyPeopleView = fadeIn oldStyle.howManyPeopleView
-                        , datePickerView = fadeOutBefore oldStyle.datePickerView
-                    }
-            in
-            ( { model | searchConditionStyle = newStyle }, Cmd.none )
-
         Animate animMsg ->
             { model
-                | searchConditionStyle =
-                    { searchFormView = Animation.update animMsg model.searchConditionStyle.searchFormView
-                    , howManyPeopleView = Animation.update animMsg model.searchConditionStyle.howManyPeopleView
-                    , datePickerView = Animation.update animMsg model.searchConditionStyle.datePickerView
-                    }
-                , drawerPosition = Animation.update animMsg model.drawerPosition
+                | drawerPosition = Animation.update animMsg model.drawerPosition
             }
                 ! []
 
@@ -243,38 +186,9 @@ easing =
     Animation.easing params
 
 
-fadeOutNext view =
-    Animation.queue
-        [ Animation.toWith easing
-            [ Animation.translate (px 0.0) (px 0.0), Animation.opacity 0.0 ]
-        ]
-        view
-        |> Animation.queue [ Animation.set [ Animation.display Animation.none ] ]
-
-
-fadeOutBefore view =
-    Animation.queue
-        [ Animation.toWith easing
-            [ Animation.translate (px 50.0) (px 0.0), Animation.opacity 0.0 ]
-        ]
-        view
-        |> Animation.queue [ Animation.set [ Animation.display Animation.none ] ]
-
-
-fadeIn view =
-    Animation.queue [ Animation.wait (Time.second * 0.1) ] view
-        |> Animation.queue [ Animation.set [ Animation.display Animation.block ] ]
-        |> Animation.queue
-            [ Animation.toWith easing
-                [ Animation.translate (px 0.0) (px 0.0)
-                , Animation.opacity 1.0
-                ]
-            ]
-
-
 drawerSliceIn style =
     Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem 0) ] ] style
 
 
 drawerSliceOut style =
-    Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem -16) ] ] style
+    Animation.queue [ Animation.set [ Animation.left (Animation.rem -16) ] ] style
