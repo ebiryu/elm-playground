@@ -113,12 +113,14 @@ type alias Bus =
     { id : String
     , name : String
     , companyName : String
-    , depPrefecture : String
     , depDate : String
-    , destPrefecture : String
-    , destDate : String
+    , depCity : String
+    , depTime : String
+    , destCity : String
+    , destTime : String
     , amount : Int
-    , vacancy : Int
+    , vacancy : String
+    , url : String
     }
 
 

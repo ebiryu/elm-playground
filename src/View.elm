@@ -199,25 +199,25 @@ searchResultBusList model =
                     div [ class "ba b--silver br3 pa3 mv3 hover-bg-black-10" ]
                         [ div [ class "f3" ] [ text bus.companyName ]
                         , div [] [ text bus.name ]
-                        , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ toString bus.vacancy ]
+                        , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ bus.vacancy ]
                         , div [ class "mt2" ]
                             [ div [ class "dib" ]
-                                [ div [] [ text bus.depPrefecture ]
+                                [ div [] [ text bus.depCity ]
                                 , div []
                                     [ text <|
                                         DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
                                             Result.withDefault model.dateCheckIn <|
-                                                Date.fromString bus.depDate
+                                                Date.fromString bus.depTime
                                     ]
                                 ]
                             , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
                             , div [ class "dib" ]
-                                [ div [] [ text bus.destPrefecture ]
+                                [ div [] [ text bus.destCity ]
                                 , div []
                                     [ text <|
                                         DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
                                             Result.withDefault model.dateCheckIn <|
-                                                Date.fromString bus.destDate
+                                                Date.fromString bus.destTime
                                     ]
                                 ]
                             ]

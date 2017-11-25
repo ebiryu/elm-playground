@@ -53,12 +53,14 @@ busDecoder =
         |> required "id" Decode.string
         |> required "name" Decode.string
         |> required "companyName" Decode.string
-        |> required "depPrefecture" Decode.string
         |> required "depDate" Decode.string
-        |> required "destPrefecture" Decode.string
-        |> required "destDate" Decode.string
+        |> required "depCity" Decode.string
+        |> required "depTime" Decode.string
+        |> required "destCity" Decode.string
+        |> required "destTime" Decode.string
         |> required "amount" Decode.int
-        |> required "vacancy" Decode.int
+        |> required "vacancy" Decode.string
+        |> required "url" Decode.string
 
 
 fetchCityList : Cmd Msg
