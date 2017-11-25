@@ -48,23 +48,27 @@
       "id":"1",
       "name": "その1",
       "companyName": "◯◯観光",
-      "depPrefecture": "東京",
+      "depCity": "東京",
       "depDate": "20 Nov 2017 09:00:00 +0900",
-      "destPrefecture": "宮城",
-      "destDate": "20 Nov 2017 15:00:00 +0900",
+      "depTime": "",
+      "destCity": "宮城",
+      "destTime": "",
       "amount": 5000,
-      "vacancy": 5
+      "vacancy": "5",
+      "url": ""
     },
     {
       "id":"2",
       "name": "その2",
       "companyName": "◯◯交通",
-      "depPrefecture": "宮城",
+      "depCity": "宮城",
       "depDate": "21 Nov 2017 09:00:00 +0900",
-      "destPrefecture": "東京",
-      "destDate": "22 Nov 2017 15:00:00 +0900",
+      "depTime": "",
+      "destcity": "東京",
+      "destTime": "",
       "amount": 4500,
-      "vacancy": 4
+      "vacancy": "4",
+      "url": ""
     }
   ]
 }
