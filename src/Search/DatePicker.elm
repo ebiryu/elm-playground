@@ -5,7 +5,6 @@ import Date.Extra.Compare as Compare exposing (is)
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Core exposing (daysInMonth, intToMonth, isoDayOfWeek, toFirstOfMonth)
 import Date.Extra.Create exposing (dateFromFields)
-import Date.Extra.Duration as Duration
 import Date.Extra.Format as DateFormat
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -14,6 +13,7 @@ import Msg exposing (Msg(..))
 import Search.DatePickerUpdate exposing (Check(..), Model, Msg(..))
 
 
+view : Model -> Html Msg.Msg
 view model =
     div [ class "absolute absolute--fill bg-black-50 z2 fixed" ]
         [ div [ class "absolute absolute--fill", onClick (ToggleDatePicker model.check) ] []
@@ -30,6 +30,7 @@ view model =
         ]
 
 
+header : Model -> Html msg
 header model =
     div
         [ class "db bg-navy w-100"

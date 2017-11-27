@@ -4,7 +4,6 @@ import Animation
 import Date
 import Dom
 import Http
-import Json.Encode exposing (Value)
 import Model exposing (Place)
 import Navigation
 import RemoteData exposing (WebData)

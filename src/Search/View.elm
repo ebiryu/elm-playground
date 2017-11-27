@@ -1,13 +1,11 @@
 module Search.View exposing (howManyPeopleView, searchFormView)
 
-import Animation
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search.DatePicker
-import Search.DatePickerUpdate exposing (Check(..))
 
 
 view : Model -> Html Msg
@@ -28,6 +26,7 @@ view model =
         ]
 
 
+inlineClass : String
 inlineClass =
     "h-100 pa3 br2"
 
@@ -172,5 +171,6 @@ howManyPeopleView model =
         ]
 
 
+numOfPeopleButtonClass : String
 numOfPeopleButtonClass =
     "dib w4 h4 ba br2 b--white tc ma1 bg-black-10 pointer v-top shadow-1"
