@@ -66,7 +66,7 @@ busDecoder =
 fetchCityList : Cmd Msg
 fetchCityList =
     Http.send Msg.GetCityList <|
-        Http.getString "http://localhost:3000/fromGov.csv"
+        Http.getString "/fromGov.csv"
 
 
 runCsvDecoder : String -> List City
