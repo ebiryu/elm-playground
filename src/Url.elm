@@ -8,7 +8,7 @@ fetchPlaceUrl =
 
 fetchBusUrl : String
 fetchBusUrl =
-    "http://localhost:4000/buses"
+    "api/v1/buses"
 
 
 fetchCityUrl : String
