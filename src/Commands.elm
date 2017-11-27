@@ -46,7 +46,7 @@ busesDecoder =
 busDecoder : Decode.Decoder Model.Bus
 busDecoder =
     decode Model.Bus
-        |> required "id" Decode.string
+        |> required "id" Decode.int
         |> required "name" Decode.string
         |> required "company_name" Decode.string
         |> required "dep_date" Decode.string

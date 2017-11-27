@@ -110,7 +110,7 @@ type alias NumOfPeople =
 
 
 type alias Bus =
-    { id : String
+    { id : Int
     , name : String
     , companyName : String
     , depDate : String
