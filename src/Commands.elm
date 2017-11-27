@@ -48,12 +48,12 @@ busDecoder =
     decode Model.Bus
         |> required "id" Decode.string
         |> required "name" Decode.string
-        |> required "companyName" Decode.string
-        |> required "depDate" Decode.string
-        |> required "depCity" Decode.string
-        |> required "depTime" Decode.string
-        |> required "destCity" Decode.string
-        |> required "destTime" Decode.string
+        |> required "company_name" Decode.string
+        |> required "dep_date" Decode.string
+        |> required "dep_city" Decode.string
+        |> required "dep_time" Decode.string
+        |> required "dest_city" Decode.string
+        |> required "dest_time" Decode.string
         |> required "amount" Decode.int
         |> required "vacancy" Decode.string
         |> required "url" Decode.string
