@@ -7,14 +7,11 @@ import Dom
 import Ease
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
-import Navigation
-import RemoteData
 import Search
 import Search.DatePickerUpdate as DatePicker
 import Task
 import Time
 import UrlParser as Url
-import View exposing (view)
 
 
 route : Url.Parser (Route -> a) a
@@ -176,6 +173,7 @@ update msg model =
             { model | windowWidth = size.width } ! []
 
 
+easing : Animation.Model.Interpolation
 easing =
     let
         params =
@@ -186,9 +184,13 @@ easing =
     Animation.easing params
 
 
+drawerSliceOut : Animation.Model.Animation msg -> Animation.Model.Animation msg
+
+
 drawerSliceIn style =
     Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem 0) ] ] style
 
 
+drawerSliceOut : Animation.Model.Animation msg -> Animation.Model.Animation msg
 drawerSliceOut style =
     Animation.queue [ Animation.set [ Animation.left (Animation.rem -16) ] ] style

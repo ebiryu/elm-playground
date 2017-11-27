@@ -4,7 +4,6 @@ import CsvDecode as Csv exposing ((|=))
 import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
-import Json.Encode as Encode
 import Model exposing (City, Place, PlaceId)
 import Msg exposing (Msg)
 import RemoteData
@@ -48,6 +47,7 @@ busesDecoder =
     Decode.list busDecoder
 
 
+busDecoder : Decode.Decoder (List Model.Bus)
 busDecoder =
     decode Model.Bus
         |> required "id" Decode.string
