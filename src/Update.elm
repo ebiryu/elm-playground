@@ -184,9 +184,7 @@ easing =
     Animation.easing params
 
 
-drawerSliceOut : Animation.Model.Animation msg -> Animation.Model.Animation msg
-
-
+drawerSliceIn : Animation.Model.Animation msg -> Animation.Model.Animation msg
 drawerSliceIn style =
     Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem 0) ] ] style
 
