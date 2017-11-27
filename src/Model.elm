@@ -2,7 +2,6 @@ module Model exposing (..)
 
 import Animation exposing (px)
 import Date exposing (Date)
-import Json.Encode exposing (Value)
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
 
@@ -90,6 +89,7 @@ type alias City =
     }
 
 
+initCity : City
 initCity =
     { id = ""
     , prefecture = ""
@@ -131,6 +131,7 @@ type alias StyleOfConditions =
     }
 
 
+initDrawerPosition : Animation.State
 initDrawerPosition =
     Animation.style
         [ Animation.left (Animation.rem -16)

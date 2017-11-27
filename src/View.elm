@@ -9,7 +9,6 @@ import Date.Extra.Format as DateFormat
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import Json.Decode as Decode
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import RemoteData

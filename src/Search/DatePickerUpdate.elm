@@ -1,7 +1,6 @@
 module Search.DatePickerUpdate exposing (..)
 
 import Date exposing (Date)
-import Date.Extra.Create exposing (dateFromFields)
 import Date.Extra.Duration as Duration
 import Date.Extra.Field as Field
 
@@ -20,6 +19,7 @@ type alias Model =
     }
 
 
+initDatePicker : a -> { check : Check, date : a, dateNow : a }
 initDatePicker date =
     { date = date
     , dateNow = date

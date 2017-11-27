@@ -1,6 +1,7 @@
 module Style exposing (..)
 
 
+drawer : List ( String, String )
 drawer =
     [ ( "position", "absolute" )
     , ( "top", "3rem" )
@@ -12,6 +13,7 @@ drawer =
     ]
 
 
+boxed : List ( String, String )
 boxed =
     [ ( "margin", "auto" )
     , ( "padding-left", "8%" )
