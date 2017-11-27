@@ -173,7 +173,7 @@ update msg model =
             { model | windowWidth = size.width } ! []
 
 
-easing : Animation.Model.Interpolation
+easing : Animation.Interpolation
 easing =
     let
         params =
@@ -184,11 +184,11 @@ easing =
     Animation.easing params
 
 
-drawerSliceIn : Animation.Model.Animation msg -> Animation.Model.Animation msg
+drawerSliceIn : Animation.State -> Animation.State
 drawerSliceIn style =
     Animation.queue [ Animation.toWith easing [ Animation.left (Animation.rem 0) ] ] style
 
 
-drawerSliceOut : Animation.Model.Animation msg -> Animation.Model.Animation msg
+drawerSliceOut : Animation.State -> Animation.State
 drawerSliceOut style =
     Animation.queue [ Animation.set [ Animation.left (Animation.rem -16) ] ] style

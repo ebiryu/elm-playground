@@ -7,18 +7,14 @@ import Json.Decode.Pipeline exposing (decode, required)
 import Model exposing (City, Place, PlaceId)
 import Msg exposing (Msg)
 import RemoteData
+import Url
 
 
 fetchPlaces : Cmd Msg
 fetchPlaces =
-    Http.get fetchPlaceUrl placesDecoder
+    Http.get Url.fetchPlaceUrl placesDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msg.OnFetchPlaces
-
-
-fetchPlaceUrl : String
-fetchPlaceUrl =
-    "http://localhost:4000/places"
 
 
 placesDecoder : Decode.Decoder (List Place)
@@ -37,7 +33,7 @@ placeDecoder =
 
 fetchBuses : Cmd Msg
 fetchBuses =
-    Http.get "http://localhost:4000/buses" busesDecoder
+    Http.get Url.fetchBusUrl busesDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msg.OnFetchBuses
 
@@ -47,7 +43,7 @@ busesDecoder =
     Decode.list busDecoder
 
 
-busDecoder : Decode.Decoder (List Model.Bus)
+busDecoder : Decode.Decoder Model.Bus
 busDecoder =
     decode Model.Bus
         |> required "id" Decode.string
@@ -66,7 +62,7 @@ busDecoder =
 fetchCityList : Cmd Msg
 fetchCityList =
     Http.send Msg.GetCityList <|
-        Http.getString "/fromGov.csv"
+        Http.getString Url.fetchCityUrl
 
 
 runCsvDecoder : String -> List City
