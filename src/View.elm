@@ -132,7 +132,7 @@ homeMinimalView model =
                             Model.OneWay ->
                                 [ div
                                     [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
-                                    , style [ ( "width", "48%" ) ]
+                                    , style [ ( "width", "54%" ) ]
                                     , onClick (ToggleDatePicker CheckIn)
                                     ]
                                     [ text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn) ]
@@ -141,27 +141,32 @@ homeMinimalView model =
                             Model.RoundTrip ->
                                 [ div
                                     [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
-                                    , style [ ( "width", "24%" ) ]
+                                    , style [ ( "width", "27%" ) ]
                                     , onClick (ToggleDatePicker CheckIn)
                                     ]
                                     [ text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn) ]
                                 , div
                                     [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
-                                    , style [ ( "width", "24%" ) ]
+                                    , style [ ( "width", "27%" ) ]
                                     , onClick (ToggleDatePicker CheckOut)
                                     ]
                                     [ text (DateFormat.format config "%b/%-d (%a)" model.dateCheckOut) ]
                                 ]
                         , [ div
                                 [ class "dark-silver bg-nearwhite br2 mv2 pa2 w-40 bg-near-white pointer shadow-1"
-                                , style [ ( "width", "48%" ) ]
+                                , style [ ( "width", "42%" ) ]
                                 , onClick ToggleNumOfPeople
                                 ]
-                                [ text "大人: "
-                                , text <| toString model.numOfPeople.adult
-                                , text "人, 子供: "
-                                , text <| toString model.numOfPeople.child
-                                , text "人"
+                                [ span [ class "dib" ]
+                                    [ text "大人: "
+                                    , text <| toString model.numOfPeople.adult
+                                    , text "人, "
+                                    ]
+                                , span [ class "dib" ]
+                                    [ text "子供: "
+                                    , text <| toString model.numOfPeople.child
+                                    , text "人"
+                                    ]
                                 ]
                           ]
                         ]
