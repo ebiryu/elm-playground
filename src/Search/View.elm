@@ -39,24 +39,23 @@ searchFormView model =
             [ class "w-80 center br2 bg-near-white navy absolute absolute--fill ma-auto bg-white-10 shadow-2"
             , style [ ( "height", "90%" ) ]
             ]
-            [ div
-                [ class "h-100 pa3 br2" ]
-                [ div [ class "f3 mb2" ]
+            [ div [ class "h-100 pa3 br2 flex flex-column flex-nowrap" ]
+                [ div [ class "f4 mb2" ]
                     (if model.citySearch == Model.Deperture then
                         [ text "出発地" ]
                      else
                         [ text "目的地" ]
                     )
-                , div [ class "h-75" ]
-                    [ input
-                        [ id "search-place"
-                        , type_ "search"
-                        , class "f6 f5-l input-reset bn pa3 br2 w-100 shadow-2"
-                        , placeholder "場所を入力"
-                        , onInput StartSearching
-                        ]
-                        []
-                    , ul [ class "list pa1 overflow-auto h-100 bt bw1 bb b--naby" ]
+                , input
+                    [ id "search-place"
+                    , type_ "search"
+                    , class "f6 f5-l input-reset bn pa3 br2 w-100 shadow-2"
+                    , placeholder "場所を入力"
+                    , onInput StartSearching
+                    ]
+                    []
+                , div [ class "flex-auto overflow-auto relative" ]
+                    [ ul [ class "list pa1 bt bw1 bb b--naby w-100 absolute top-0 left-0" ]
                         (List.map (searchResultList model.citySearch) model.citySearchResult)
                     ]
                 ]
@@ -67,7 +66,7 @@ searchFormView model =
 searchResultList : Model.DepOrDest -> Model.City -> Html Msg
 searchResultList depDest city =
     li
-        [ class "b--navy bb bw1 br2 br--top ma1 ph2 pv3 f4 hover-bg-black-20 pointer"
+        [ class "b--navy bb bw1 br2 br--top ma1 ph2 pv2 f4 hover-bg-black-20 pointer"
         , onClick (SelectCity city depDest)
         ]
         [ text city.city ]
@@ -78,7 +77,7 @@ howManyPeopleView model =
     div [ class "absolute absolute--fill bg-black-50 fixed z2" ]
         [ div [ class "absolute absolute--fill", onClick ToggleNumOfPeople ] []
         , div
-            [ class "w-80 center br2 bg-near-white navy absolute absolute--fill ma-auto bg-white-10 shadow-2"
+            [ class "w-60 center br2 bg-near-white navy absolute absolute--fill ma-auto bg-white-10 shadow-2"
             , style [ ( "height", "90%" ) ]
             ]
             [ div
