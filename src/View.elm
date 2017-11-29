@@ -239,7 +239,7 @@ organizeCities str =
     str
         |> String.dropLeft 2
         |> String.dropRight 2
-        |> String.split "],["
+        |> String.split "], ["
         |> List.map
             (\s ->
                 ( Maybe.withDefault "" <| List.head <| String.split "," s
