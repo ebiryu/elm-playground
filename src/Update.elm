@@ -161,7 +161,7 @@ update msg model =
             { model | buses = response } ! []
 
         SubmitSearch ->
-            ( model, Commands.fetchBuses )
+            ( model, Commands.fetchBuses model )
 
         Animate animMsg ->
             { model
