@@ -1,6 +1,8 @@
 module Commands exposing (..)
 
 import CsvDecode as Csv exposing ((|=))
+import Date.Extra.Config.Config_ja_jp exposing (config)
+import Date.Extra.Format as DateFormat
 import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
@@ -31,11 +33,16 @@ placeDecoder =
         |> required "longitude" Decode.float
 
 
-fetchBuses : Cmd Msg
-fetchBuses =
-    Http.get Url.fetchBusUrl busesDecoder
+fetchBuses : Model.Model -> Cmd Msg
+fetchBuses model =
+    Http.get (busUrlWithQuery model) busesDecoder
         |> RemoteData.sendRequest
         |> Cmd.map Msg.OnFetchBuses
+
+
+busUrlWithQuery : Model.Model -> String
+busUrlWithQuery model =
+    Url.fetchBusUrl ++ "?" ++ "dep_date=" ++ DateFormat.format config "%Y-%b-%-d" model.dateCheckIn
 
 
 busesDecoder : Decode.Decoder (List Model.Bus)
