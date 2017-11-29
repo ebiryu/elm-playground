@@ -225,12 +225,32 @@ searchResultBusList model =
                                     ]
                                 ]
                             ]
+                        , div [] (List.map showCityAndTime (organizeCities bus.depCity))
                         ]
             in
             div [ class "mt3 navy" ] (List.map list buses)
 
         RemoteData.Failure error ->
             div [] []
+
+
+organizeCities : String -> List ( String, String )
+organizeCities str =
+    str
+        |> String.dropLeft 2
+        |> String.dropRight 2
+        |> String.split "],["
+        |> List.map
+            (\s ->
+                ( Maybe.withDefault "" <| List.head <| String.split "," s
+                , Maybe.withDefault "" <| List.head <| Maybe.withDefault [] <| List.tail <| String.split "," s
+                )
+            )
+
+
+showCityAndTime : ( String, String ) -> Html msg
+showCityAndTime ( city, time ) =
+    div [ class "dib" ] [ text city, br [] [], text time ]
 
 
 historyView : Model -> Html Msg
