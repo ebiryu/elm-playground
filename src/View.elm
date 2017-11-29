@@ -225,7 +225,7 @@ searchResultBusList model =
                                     ]
                                 ]
                             ]
-                        , div [] (List.map showCityAndTime (organizeCities bus.depCity))
+                        , div [] (List.map showCityAndTime (organizeCities bus.depTime))
                         ]
             in
             div [ class "mt3 navy" ] (List.map list buses)
