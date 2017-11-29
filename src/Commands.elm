@@ -42,8 +42,8 @@ fetchBuses model =
 
 busUrlWithQuery : Model.Model -> String
 busUrlWithQuery model =
-    -- Url.fetchBusUrl ++ "?" ++ "dep_date=" ++ DateFormat.format config "%Y-%b-%-d" model.dateCheckIn
-    Url.fetchBusUrl
+    -- Url.fetchBusUrl
+    Url.fetchBusUrl ++ "?" ++ "dep_date=" ++ DateFormat.format config "%Y-%b-%-d" model.dateCheckIn
 
 
 busesDecoder : Decode.Decoder (List Model.Bus)
