@@ -14,6 +14,7 @@ import Msg exposing (Msg(..))
 import RemoteData
 import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(..))
+import Search.Map
 import Search.View as Search
 import Style as Style
 
@@ -172,6 +173,7 @@ homeMinimalView model =
                         ]
                 , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer", onClick SubmitSearch ] [ text "検索" ]
                 ]
+            , Search.Map.maps
             , searchResultBusList model
             ]
         ]
