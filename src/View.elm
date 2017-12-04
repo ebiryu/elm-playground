@@ -6,6 +6,7 @@ import Animation
 import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
+import Element exposing (el)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -16,7 +17,7 @@ import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(..))
 import Search.Map
 import Search.View as Search
-import Style as Style
+import Style
 
 
 view : Model -> Html Msg
@@ -39,19 +40,8 @@ header_ : Model -> Html Msg
 header_ model =
     -- header [ style Style.header ]
     header [ class "flex items-center bg-navy h3 shadow-2" ]
-        [ a
-            (case model.drawerState of
-                True ->
-                    []
-
-                False ->
-                    [ onClick (ToggleDrawer model.drawerState) ]
-            )
-            [ i
-                [ class "white ma2 material-icons md-36 pointer"
-                ]
-                [ text "menu" ]
-            ]
+        [ a [ onClick (ToggleDrawer model.drawerState) ]
+            [ i [ class "white ma2 material-icons md-36 pointer" ] [ text "menu" ] ]
         , a [ class "link white f2", href "#" ] [ text "elm-sample-spa" ]
         , div [ class "ml-auto mr2 flex" ]
             (List.map viewLinkTab [ "birds", "cats", "dogs", "map", "history" ])
@@ -96,7 +86,7 @@ mainView model =
 
 homeView : Model -> Html Msg
 homeView model =
-    div [ style Style.boxed ]
+    div []
         [ div
             [ class "center"
             , style [ ( "width", "500px" ) ]
