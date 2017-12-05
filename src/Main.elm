@@ -55,6 +55,7 @@ init location =
     , datePickerShow = False
     , buses = RemoteData.NotAsked
     , drawerPosition = Model.initDrawerPosition
+    , searchFromMapShow = False
     , windowWidth = 0
     }
         ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]

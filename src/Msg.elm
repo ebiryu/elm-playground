@@ -34,5 +34,6 @@ type Msg
     | ToggleDatePicker DatePicker.Check
     | OnFetchBuses (WebData (List Model.Bus))
     | SubmitSearch
+    | ToggleMap
     | Animate Animation.Msg
     | WindowWidth Size

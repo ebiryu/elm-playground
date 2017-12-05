@@ -169,6 +169,9 @@ update msg model =
             }
                 ! []
 
+        ToggleMap ->
+            { model | searchFromMapShow = not model.searchFromMapShow } ! []
+
         WindowWidth size ->
             { model | windowWidth = size.width } ! []
 

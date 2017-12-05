@@ -6,7 +6,6 @@ import Animation
 import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
-import Element exposing (el)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -15,9 +14,7 @@ import Msg exposing (Msg(..))
 import RemoteData
 import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(..))
-import Search.Map
 import Search.View as Search
-import Style
 
 
 view : Model -> Html Msg
@@ -31,6 +28,8 @@ view model =
             Search.DatePicker.view model.datePickerModel
           else if model.numOfPeopleShow then
             Search.howManyPeopleView model
+          else if model.searchFromMapShow then
+            Search.searchFromMapView model
           else
             text ""
         ]
@@ -163,7 +162,7 @@ homeMinimalView model =
                         ]
                 , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer", onClick SubmitSearch ] [ text "検索" ]
                 ]
-            , Search.Map.maps
+            , div [ class "db br2 shadow-1 pa2 ma2 pointer", onClick ToggleMap ] [ text "show map" ]
             , searchResultBusList model
             ]
         ]

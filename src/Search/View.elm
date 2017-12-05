@@ -1,4 +1,4 @@
-module Search.View exposing (howManyPeopleView, searchFormView)
+module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView)
 
 import Html exposing (..)
 import Html.Attributes exposing (..)
@@ -6,6 +6,7 @@ import Html.Events exposing (..)
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search.DatePicker
+import Search.Map as Map
 
 
 view : Model -> Html Msg
@@ -26,9 +27,15 @@ view model =
         ]
 
 
-inlineClass : String
-inlineClass =
-    "h-100 pa3 br2"
+searchFromMapView : Model -> Html Msg
+searchFromMapView model =
+    div [ class "absolute absolute--fill bg-white fixed z2" ]
+        [ div [ class "h-100 flex flex-column" ]
+            [ div [ class "db pa2 bb" ] [ i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ] ]
+            , div [ class "flex-auto" ] [ Map.maps ]
+            , div [ class "h5" ] []
+            ]
+        ]
 
 
 searchFormView : Model -> Html Msg

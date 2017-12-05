@@ -30,6 +30,7 @@ type alias Model =
     , datePickerShow : Bool
     , buses : WebData (List Bus)
     , drawerPosition : Animation.State
+    , searchFromMapShow : Bool
     , windowWidth : Int
     }
 
