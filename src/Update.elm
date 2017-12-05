@@ -172,6 +172,9 @@ update msg model =
         ToggleMap ->
             { model | searchFromMapShow = not model.searchFromMapShow } ! []
 
+        ClickPrefecture prefNum ->
+            { model | selectedPrefNum = prefNum } ! []
+
         WindowWidth size ->
             { model | windowWidth = size.width } ! []
 

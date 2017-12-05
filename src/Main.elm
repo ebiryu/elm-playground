@@ -56,6 +56,7 @@ init location =
     , buses = RemoteData.NotAsked
     , drawerPosition = Model.initDrawerPosition
     , searchFromMapShow = False
+    , selectedPrefNum = 48
     , windowWidth = 0
     }
         ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]

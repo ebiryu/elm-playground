@@ -35,5 +35,6 @@ type Msg
     | OnFetchBuses (WebData (List Model.Bus))
     | SubmitSearch
     | ToggleMap
+    | ClickPrefecture Int
     | Animate Animation.Msg
     | WindowWidth Size
