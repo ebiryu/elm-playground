@@ -1,18 +1,23 @@
 module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView)
 
 import Color exposing (rgb)
+import Date.Extra.Config.Config_ja_jp exposing (config)
+import Date.Extra.Format as DateFormat
 import Element exposing (column, el, row)
-import Element.Attributes as EA exposing (center, spacing)
+import Element.Attributes as EA exposing (alignBottom, center, spacing, spread)
+import Element.Events as EE
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search.DatePicker
+import Search.DatePickerUpdate exposing (Check(CheckIn, CheckOut))
 import Search.Map as Map
 import Style
 import Style.Border as Border
 import Style.Color as Color
+import Style.Shadow as Shadow
 import Todofuken
 
 
@@ -21,70 +26,90 @@ type MyStyle
     | Header
     | Deperture
     | Destination
+    | Date
+    | Map
+    | Submit
 
 
-styleSheet : Style.StyleSheet MyStyle a
-styleSheet =
+styleSheet : Model -> Style.StyleSheet MyStyle a
+styleSheet model =
     Style.styleSheet
         [ Style.style None []
         , Style.style Header [ Border.bottom 1 ]
-        , Style.style Deperture [ Border.bottom 2, Color.border (rgb 48 63 159) ]
-        , Style.style Destination [ Border.bottom 2, Color.border (rgb 255 87 34) ]
+        , Style.style Deperture
+            [ Border.bottom 2
+            , Style.cursor "pointer"
+            , if model.citySearch == Model.Deperture then
+                Color.border (rgb 48 63 159)
+              else
+                Color.border borderColor
+            ]
+        , Style.style Destination
+            [ Border.bottom 2
+            , Style.cursor "pointer"
+            , if model.citySearch == Model.Destination then
+                Color.border (rgb 255 87 34)
+              else
+                Color.border borderColor
+            ]
+        , Style.style Date
+            [ Border.bottom 2, Style.cursor "pointer", Color.border borderColor ]
+        , Style.style Map [ Shadow.inset { offset = ( 0, 0 ), size = 2, blur = 10, color = rgb 150 150 150 } ]
+        , Style.style Submit
+            [ Style.cursor "pointer"
+            , Color.background (rgb 160 160 160)
+            , Color.text (rgb 255 255 255)
+            , Border.rounded 2
+            ]
         ]
+
+
+borderColor : Color.Color
+borderColor =
+    rgb 230 230 230
 
 
 searchFromMapView : Model -> Html Msg
 searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
-        [ Element.layout styleSheet <|
+        [ Element.layout (styleSheet model) <|
             column None
                 [ EA.height (EA.percent 100) ]
                 [ el Header [] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
                 , el None
                     [ center, EA.width (EA.px 360) ]
                     (column None
-                        [ spacing 10 ]
-                        [ el None [] (Element.html (Map.maps model))
+                        [ spacing 5 ]
+                        [ el Map [] (Element.html (Map.maps model))
                         , row None
                             [ spacing 10, EA.padding 10 ]
-                            [ column None
-                                [ EA.width (EA.percent 50), spacing 10 ]
+                            [ column Deperture
+                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]
                                 [ Element.text "出発地"
-                                , el Deperture [] (todofuken model.depPrefNum)
+                                , todofuken model.depPrefNum
                                 ]
-                            , column None
-                                [ EA.width (EA.percent 50), spacing 10 ]
+                            , column Destination
+                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDestination ]
                                 [ Element.text "目的地"
-                                , el Destination [] (todofuken model.destPrefNum)
+                                , todofuken model.destPrefNum
                                 ]
+                            ]
+                        , row None
+                            [ spacing 10, EA.padding 10, spread ]
+                            [ column Date
+                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick (ToggleDatePicker CheckIn) ]
+                                [ Element.text "出発日"
+                                , Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
+                                ]
+                            , el Submit [ EE.onClick SubmitSearch, alignBottom, EA.padding 10 ] (Element.text "検索")
                             ]
                         ]
                     )
                 ]
-
-        -- Element.html <|
-        --     div
-        --         [ class "h-100 flex flex-column" ]
-        --         [ div [ class "db pa2 bb" ] [ i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ] ]
-        --         , div
-        --             [ class "flex-auto overflow-auto center"
-        --             , style
-        --                 [ ( "box-shadow", "inset 0px 0px 10px 5px rgba(0,0,0,0.4)" )
-        --                 , ( "width", "340px" )
-        --                 ]
-        --             ]
-        --             [ Map.maps model ]
-        --         , div [ class "h5 w5 center flex f5" ]
-        --             [ div [ class "dib ma2 pa2 h4 w-50 align-top" ]
-        --                 [ text "出発地"
-        --                 , div [ class "mv2 bb b--dark-blue" ] [ todofuken model.depPrefNum ]
-        --                 ]
-        --             , div [ class "dib ma2 pa2 h4 w-50 align-top" ]
-        --                 [ text "目的地"
-        --                 , div [ class "mt2 bb b--orange" ] [ todofuken model.destPrefNum ]
-        --                 ]
-        --             ]
-        --         ]
+        , if model.datePickerShow then
+            Search.DatePicker.view model.datePickerModel
+          else
+            text ""
         ]
 
 

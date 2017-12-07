@@ -24,8 +24,6 @@ view model =
         , mainView model
         , if model.toggleSearch then
             Search.searchFormView model
-          else if model.datePickerShow then
-            Search.DatePicker.view model.datePickerModel
           else if model.numOfPeopleShow then
             Search.howManyPeopleView model
           else if model.searchFromMapShow then

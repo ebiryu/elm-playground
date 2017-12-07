@@ -180,6 +180,12 @@ update msg model =
                 Model.Destination ->
                     { model | destPrefNum = prefNum + 1, citySearch = Model.Deperture } ! []
 
+        ClickDeperture ->
+            { model | citySearch = Model.Deperture } ! []
+
+        ClickDestination ->
+            { model | citySearch = Model.Destination } ! []
+
         HoverPrefecture prefNum ->
             { model | hoveredPrefNum = prefNum + 1 } ! []
 

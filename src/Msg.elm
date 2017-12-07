@@ -37,5 +37,7 @@ type Msg
     | ToggleMap
     | ClickPrefecture Int
     | HoverPrefecture Int
+    | ClickDeperture
+    | ClickDestination
     | Animate Animation.Msg
     | WindowWidth Size

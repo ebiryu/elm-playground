@@ -56,8 +56,8 @@ init location =
     , buses = RemoteData.NotAsked
     , drawerPosition = Model.initDrawerPosition
     , searchFromMapShow = False
-    , depPrefNum = 48
-    , destPrefNum = 48
+    , depPrefNum = 13
+    , destPrefNum = 27
     , hoveredPrefNum = 48
     , windowWidth = 0
     }
