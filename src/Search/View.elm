@@ -1,5 +1,6 @@
 module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView)
 
+import Element
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -7,24 +8,8 @@ import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search.DatePicker
 import Search.Map as Map
-
-
-view : Model -> Html Msg
-view model =
-    div [ class "absolute absolute--fill bg-black-50 fixed z2" ]
-        [ div [ class "absolute absolute--fill", onClick (ToggleSearch model.citySearch) ] []
-        , div
-            [ class "w-80 center br2 bg-near-white navy absolute absolute--fill ma-auto bg-white-10 shadow-2"
-            , style [ ( "height", "90%" ) ]
-            ]
-            [ searchFormView model
-            , howManyPeopleView model
-            ]
-        , if model.datePickerShow then
-            Search.DatePicker.view model.datePickerModel
-          else
-            text ""
-        ]
+import Style
+import Todofuken
 
 
 searchFromMapView : Model -> Html Msg
@@ -33,13 +18,30 @@ searchFromMapView model =
         [ div [ class "h-100 flex flex-column" ]
             [ div [ class "db pa2 bb" ] [ i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ] ]
             , div
-                [ class "flex-auto overflow-auto"
-                , style [ ( "box-shadow", "inset 0px 0px 10px 5px rgba(0,0,0,0.4)" ) ]
+                [ class "flex-auto overflow-auto center"
+                , style
+                    [ ( "box-shadow", "inset 0px 0px 10px 5px rgba(0,0,0,0.4)" )
+                    , ( "width", "340px" )
+                    ]
                 ]
                 [ Map.maps model ]
-            , div [ class "h5" ] []
+            , div [ class "h5 w5 center flex f5" ]
+                [ div [ class "dib ma2 pa2 h4 w-50 align-top" ]
+                    [ text "出発地"
+                    , div [ class "mv2 bb b--dark-blue" ] [ todofuken model.depPrefNum ]
+                    ]
+                , div [ class "dib ma2 pa2 h4 w-50 align-top" ]
+                    [ text "目的地"
+                    , div [ class "mt2 bb b--orange" ] [ todofuken model.destPrefNum ]
+                    ]
+                ]
             ]
         ]
+
+
+todofuken : Int -> Html msg
+todofuken code =
+    text (Todofuken.fromCode code |> Maybe.map .name |> Maybe.withDefault " ")
 
 
 searchFormView : Model -> Html Msg

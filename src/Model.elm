@@ -31,7 +31,8 @@ type alias Model =
     , buses : WebData (List Bus)
     , drawerPosition : Animation.State
     , searchFromMapShow : Bool
-    , selectedPrefNum : Int
+    , depPrefNum : Int
+    , destPrefNum : Int
     , hoveredPrefNum : Int
     , windowWidth : Int
     }

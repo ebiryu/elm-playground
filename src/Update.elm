@@ -173,7 +173,12 @@ update msg model =
             { model | searchFromMapShow = not model.searchFromMapShow } ! []
 
         ClickPrefecture prefNum ->
-            { model | selectedPrefNum = prefNum + 1 } ! []
+            case model.citySearch of
+                Model.Deperture ->
+                    { model | depPrefNum = prefNum + 1, citySearch = Model.Destination } ! []
+
+                Model.Destination ->
+                    { model | destPrefNum = prefNum + 1, citySearch = Model.Deperture } ! []
 
         HoverPrefecture prefNum ->
             { model | hoveredPrefNum = prefNum + 1 } ! []

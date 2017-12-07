@@ -42,17 +42,14 @@ indexedPrefs : Model -> List ( Int, Svg Event )
 indexedPrefs model =
     List.indexedMap
         (\i ( f, a ) ->
-            if i == (model.selectedPrefNum - 1) then
+            if i == (model.depPrefNum - 1) then
                 (,) i <| f (List.concat [ depPrefAttribute, a ]) []
+            else if i == (model.destPrefNum - 1) then
+                (,) i <| f (List.concat [ destPrefAttribute, a ]) []
             else
                 (,) i <| f (List.concat [ prefAttribute, a ]) []
         )
         prefElements
-
-
-prefs : List (Svg Event)
-prefs =
-    List.map (\( f, a ) -> f (List.concat [ prefAttribute, a ]) []) prefElements
 
 
 prefAttribute : List (Svg.Attribute Event)
@@ -63,6 +60,11 @@ prefAttribute =
 depPrefAttribute : List (Svg.Attribute Event)
 depPrefAttribute =
     [ onClick Click, onMouseOver Hover, depPrefStyle ]
+
+
+destPrefAttribute : List (Svg.Attribute Event)
+destPrefAttribute =
+    [ onClick Click, onMouseOver Hover, destPrefStyle ]
 
 
 type Event
@@ -77,7 +79,12 @@ prefStyle =
 
 depPrefStyle : Svg.Attribute msg
 depPrefStyle =
-    Svg.Attributes.style "fill:#a00; cursor:pointer"
+    Svg.Attributes.style "fill:#303F9F; cursor:pointer"
+
+
+destPrefStyle : Svg.Attribute msg
+destPrefStyle =
+    Svg.Attributes.style "fill:#FF5722; cursor:pointer"
 
 
 borderStyle : Svg.Attribute msg
@@ -105,8 +112,8 @@ prefElements =
     , ( path, [ stroke "#fff", d "M351.459,304.943h37.422v-40.062l-31.048,0.024c-2.591,0.002-4.898-1.241-6.374-3.155V304.943z" ] )
     , ( path, [ stroke "#fff", d "M350.039,304.943v-46.104c-0.162-0.635-0.258-1.295-0.258-1.979v-8.776c0-4.43-3.623-8.053-8.053-8.053 h-10.152c-4.429,0-8.053,3.623-8.053,8.053v56.859H350.039z" ] )
     , ( path, [ stroke "#fff", d "M323.523,306.363v11.841c0,4.43-3.624,8.054-8.052,8.054H301.5v23.24h47.173v-43.135H323.523z" ] )
-    , ( polygon, [ stroke "#fff", points "401.979,389.408 414.055,389.408 414.055,306.363 380.809,306.363 380.809,422.255 401.979,422.255 " ] )
     , ( rect, [ x "403.441", y "390.828", stroke "#fff", width "34.309", height "31.427" ] )
+    , ( polygon, [ stroke "#fff", points "401.979,389.408 414.055,389.408 414.055,306.363 380.809,306.363 380.809,422.255 401.979,422.255 " ] )
     , ( rect, [ x "350.094", y "306.157", stroke "#fff", width "28.906", height "116.098" ] )
     , ( path, [ stroke "#fff", d "M390.881,423.753v43.888l38.896,0.055c4.43,0,8.052-3.296,8.052-7.324c0-1.291,0-36.672,0-36.672 L390.881,423.753z" ] )
     , ( path, [ stroke "#fff", d "M389.422,423.808h-8.613v-0.108h-30.715v48.993c1.21-2.925,4.095-4.997,7.442-4.997h31.886V423.808z" ] )
