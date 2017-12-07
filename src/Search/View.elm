@@ -1,6 +1,8 @@
 module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView)
 
-import Element
+import Color exposing (rgb)
+import Element exposing (column, el, row)
+import Element.Attributes as EA exposing (center, spacing)
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
@@ -9,39 +11,86 @@ import Msg exposing (Msg(..))
 import Search.DatePicker
 import Search.Map as Map
 import Style
+import Style.Border as Border
+import Style.Color as Color
 import Todofuken
+
+
+type MyStyle
+    = None
+    | Header
+    | Deperture
+    | Destination
+
+
+styleSheet : Style.StyleSheet MyStyle a
+styleSheet =
+    Style.styleSheet
+        [ Style.style None []
+        , Style.style Header [ Border.bottom 1 ]
+        , Style.style Deperture [ Border.bottom 2, Color.border (rgb 48 63 159) ]
+        , Style.style Destination [ Border.bottom 2, Color.border (rgb 255 87 34) ]
+        ]
 
 
 searchFromMapView : Model -> Html Msg
 searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
-        [ div [ class "h-100 flex flex-column" ]
-            [ div [ class "db pa2 bb" ] [ i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ] ]
-            , div
-                [ class "flex-auto overflow-auto center"
-                , style
-                    [ ( "box-shadow", "inset 0px 0px 10px 5px rgba(0,0,0,0.4)" )
-                    , ( "width", "340px" )
-                    ]
+        [ Element.layout styleSheet <|
+            column None
+                [ EA.height (EA.percent 100) ]
+                [ el Header [] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
+                , el None
+                    [ center, EA.width (EA.px 360) ]
+                    (column None
+                        [ spacing 10 ]
+                        [ el None [] (Element.html (Map.maps model))
+                        , row None
+                            [ spacing 10, EA.padding 10 ]
+                            [ column None
+                                [ EA.width (EA.percent 50), spacing 10 ]
+                                [ Element.text "出発地"
+                                , el Deperture [] (todofuken model.depPrefNum)
+                                ]
+                            , column None
+                                [ EA.width (EA.percent 50), spacing 10 ]
+                                [ Element.text "目的地"
+                                , el Destination [] (todofuken model.destPrefNum)
+                                ]
+                            ]
+                        ]
+                    )
                 ]
-                [ Map.maps model ]
-            , div [ class "h5 w5 center flex f5" ]
-                [ div [ class "dib ma2 pa2 h4 w-50 align-top" ]
-                    [ text "出発地"
-                    , div [ class "mv2 bb b--dark-blue" ] [ todofuken model.depPrefNum ]
-                    ]
-                , div [ class "dib ma2 pa2 h4 w-50 align-top" ]
-                    [ text "目的地"
-                    , div [ class "mt2 bb b--orange" ] [ todofuken model.destPrefNum ]
-                    ]
-                ]
-            ]
+
+        -- Element.html <|
+        --     div
+        --         [ class "h-100 flex flex-column" ]
+        --         [ div [ class "db pa2 bb" ] [ i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ] ]
+        --         , div
+        --             [ class "flex-auto overflow-auto center"
+        --             , style
+        --                 [ ( "box-shadow", "inset 0px 0px 10px 5px rgba(0,0,0,0.4)" )
+        --                 , ( "width", "340px" )
+        --                 ]
+        --             ]
+        --             [ Map.maps model ]
+        --         , div [ class "h5 w5 center flex f5" ]
+        --             [ div [ class "dib ma2 pa2 h4 w-50 align-top" ]
+        --                 [ text "出発地"
+        --                 , div [ class "mv2 bb b--dark-blue" ] [ todofuken model.depPrefNum ]
+        --                 ]
+        --             , div [ class "dib ma2 pa2 h4 w-50 align-top" ]
+        --                 [ text "目的地"
+        --                 , div [ class "mt2 bb b--orange" ] [ todofuken model.destPrefNum ]
+        --                 ]
+        --             ]
+        --         ]
         ]
 
 
-todofuken : Int -> Html msg
+todofuken : Int -> Element.Element MyStyle a msg
 todofuken code =
-    text (Todofuken.fromCode code |> Maybe.map .name |> Maybe.withDefault " ")
+    Element.text (Todofuken.fromCode code |> Maybe.map .name |> Maybe.withDefault " ")
 
 
 searchFormView : Model -> Html Msg
