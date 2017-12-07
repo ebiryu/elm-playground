@@ -7,7 +7,7 @@ import Msg exposing (Msg)
 import Style
 import Svg exposing (..)
 import Svg.Attributes exposing (d, fill, height, points, stroke, style, viewBox, width, x, y)
-import Svg.Events exposing (onClick, onMouseOver)
+import Svg.Events exposing (onClick, onMouseOut, onMouseOver)
 import Todofuken
 
 
@@ -32,6 +32,9 @@ mapClick model =
 
                         Hover ->
                             Msg.HoverPrefecture i
+
+                        HoverOut ->
+                            Msg.HoverOutMap
                 )
                 pref
         )
@@ -54,22 +57,23 @@ indexedPrefs model =
 
 prefAttribute : List (Svg.Attribute Event)
 prefAttribute =
-    [ onClick Click, onMouseOver Hover, prefStyle ]
+    [ onClick Click, onMouseOver Hover, onMouseOut HoverOut, prefStyle ]
 
 
 depPrefAttribute : List (Svg.Attribute Event)
 depPrefAttribute =
-    [ onClick Click, onMouseOver Hover, depPrefStyle ]
+    [ onClick Click, onMouseOver Hover, onMouseOut HoverOut, depPrefStyle ]
 
 
 destPrefAttribute : List (Svg.Attribute Event)
 destPrefAttribute =
-    [ onClick Click, onMouseOver Hover, destPrefStyle ]
+    [ onClick Click, onMouseOver Hover, onMouseOut HoverOut, destPrefStyle ]
 
 
 type Event
     = Click
     | Hover
+    | HoverOut
 
 
 prefStyle : Svg.Attribute msg

@@ -186,8 +186,14 @@ update msg model =
         ClickDestination ->
             { model | citySearch = Model.Destination } ! []
 
+        MoveMouse position ->
+            { model | positionOfMouse = position } ! []
+
         HoverPrefecture prefNum ->
-            { model | hoveredPrefNum = prefNum + 1 } ! []
+            { model | hoveredPrefNum = prefNum + 1, hoveredMap = True } ! []
+
+        HoverOutMap ->
+            { model | hoveredMap = False } ! []
 
         WindowWidth size ->
             { model | windowWidth = size.width } ! []

@@ -2,6 +2,7 @@ module Model exposing (..)
 
 import Animation exposing (px)
 import Date exposing (Date)
+import Mouse
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
 
@@ -34,6 +35,8 @@ type alias Model =
     , depPrefNum : Int
     , destPrefNum : Int
     , hoveredPrefNum : Int
+    , hoveredMap : Bool
+    , positionOfMouse : Mouse.Position
     , windowWidth : Int
     }
 

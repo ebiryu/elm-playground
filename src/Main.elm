@@ -5,6 +5,7 @@ import Commands exposing (fetchPlaces)
 import Date
 import Date.Extra.Create exposing (dateFromFields)
 import Model exposing (Model, Route(..))
+import Mouse
 import Msg exposing (Msg(..))
 import Navigation
 import RemoteData
@@ -59,6 +60,8 @@ init location =
     , depPrefNum = 13
     , destPrefNum = 27
     , hoveredPrefNum = 48
+    , hoveredMap = False
+    , positionOfMouse = { x = 0, y = 0 }
     , windowWidth = 0
     }
         ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]
@@ -75,4 +78,11 @@ subscriptions model =
             [ model.drawerPosition
             ]
         , Window.resizes WindowWidth
+
+        -- , case model.hoveredMap of
+        --     True ->
+        --         Mouse.moves MoveMouse
+        --
+        --     False ->
+        --         Sub.none
         ]
