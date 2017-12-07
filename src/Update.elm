@@ -173,7 +173,10 @@ update msg model =
             { model | searchFromMapShow = not model.searchFromMapShow } ! []
 
         ClickPrefecture prefNum ->
-            { model | selectedPrefNum = prefNum } ! []
+            { model | selectedPrefNum = prefNum + 1 } ! []
+
+        HoverPrefecture prefNum ->
+            { model | hoveredPrefNum = prefNum + 1 } ! []
 
         WindowWidth size ->
             { model | windowWidth = size.width } ! []

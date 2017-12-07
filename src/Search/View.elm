@@ -32,7 +32,11 @@ searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
         [ div [ class "h-100 flex flex-column" ]
             [ div [ class "db pa2 bb" ] [ i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ] ]
-            , div [ class "flex-auto" ] [ Map.maps ]
+            , div
+                [ class "flex-auto overflow-auto"
+                , style [ ( "box-shadow", "inset 0px 0px 10px 5px rgba(0,0,0,0.4)" ) ]
+                ]
+                [ Map.maps model ]
             , div [ class "h5" ] []
             ]
         ]

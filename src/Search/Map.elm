@@ -2,11 +2,13 @@ module Search.Map exposing (..)
 
 import Element
 import Html
+import Model exposing (Model)
 import Msg exposing (Msg)
 import Style
 import Svg exposing (..)
 import Svg.Attributes exposing (d, fill, height, points, stroke, style, viewBox, width, x, y)
-import Svg.Events exposing (onClick)
+import Svg.Events exposing (onClick, onMouseOver)
+import Todofuken
 
 
 prefStyle : Svg.Attribute msg
@@ -19,72 +21,95 @@ borderStyle =
     Svg.Attributes.style "fill:#aaa;"
 
 
-maps : Html.Html Msg
-maps =
-    svg [ width "100%", height "500px", viewBox "0 0 600 500" ]
-        [ g [] mapClick
+maps : Model -> Html.Html Msg
+maps model =
+    svg [ width "100%", height "100%", viewBox "0 0 600 500" ]
+        [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
+        , g [] mapClick
         , polygon [ borderStyle, fill "#fff", points "67.771,497.093 66.352,497.093 66.352,434.494 13.083,434.494 13.083,433.074 67.771,433.074 " ] []
         ]
 
 
-indexedPrefs : List ( Int, Svg () )
+indexedPrefs : List ( Int, Svg Event )
 indexedPrefs =
     List.indexedMap (,) prefs
 
 
 mapClick : List (Svg Msg)
 mapClick =
-    List.map (\( i, pref ) -> Svg.map (\_ -> Msg.ClickPrefecture i) pref) indexedPrefs
+    List.map
+        (\( i, pref ) ->
+            Svg.map
+                (\e ->
+                    case e of
+                        Click ->
+                            Msg.ClickPrefecture i
+
+                        Hover ->
+                            Msg.HoverPrefecture i
+                )
+                pref
+        )
+        indexedPrefs
 
 
-prefs : List (Svg ())
+prefAttribute : List (Svg.Attribute Event)
+prefAttribute =
+    [ onClick Click, onMouseOver Hover, prefStyle ]
+
+
+type Event
+    = Click
+    | Hover
+
+
+prefs : List (Svg Event)
 prefs =
-    [ path [ onClick (), prefStyle, stroke "#fff", d "M558.193,113.86c4.429,0,8.052-3.624,8.052-8.053V27.819c0-4.429-3.623-8.053-8.052-8.053H425.551 c-4.43,0-8.052,3.624-8.052,8.053v99.398c0,4.429,3.622,8.053,8.052,8.053h21.082c4.429,0,8.052-3.624,8.052-8.053v-5.305 c0-4.429,3.623-8.052,8.052-8.052H558.193z" ] []
-    , rect [ onClick (), prefStyle, x "474.3", y "219.799", stroke "#fff", width "57.013", height "44.696" ] []
-    , rect [ onClick (), prefStyle, x "474.3", y "178.855", stroke "#fff", width "57.013", height "39.514" ] []
-    , rect [ onClick (), prefStyle, x "474.3", y "178.855", stroke "#fff", width "57.013", height "39.514" ] []
-    , rect [ onClick (), prefStyle, x "415.808", y "178.855", stroke "#fffff", width "57.06", height "39.514" ] []
-    , polygon [ onClick (), prefStyle, stroke "#fff", points "439.373,264.495 472.867,264.495 472.867,219.799 415.808,219.799 415.808,250.699 439.373,250.699" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M472.867,177.426h1.433h57.013v-20.581c0-4.429-3.623-8.052-8.052-8.052h-99.4 c-4.429,0-8.053,3.624-8.053,8.052v20.581H472.867z" ] []
-    , rect [ onClick (), prefStyle, x "439.373", y "265.928", stroke "#fff", width "91.939", height "39.191" ] []
-    , rect [ onClick (), prefStyle, x "457.205", y "306.363", stroke "#fff", width "38.461", height "43.135" ] []
-    , polygon [ onClick (), prefStyle, stroke "#fff", points "497.111,364.525 531.312,364.525 531.229,306.363 497.027,306.363" ] []
-    , rect [ onClick (), prefStyle, x "415.531", y "306.363", stroke "#fff", width "40.223", height "43.135" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M497.111,365.955v55.52h-0.168v35.881c0,4.448,3.623,8.086,8.052,8.086h18.266 c4.429,0,8.052-3.638,8.052-8.086v-91.4H497.111z" ] []
-    , rect [ onClick (), prefStyle, x "415.531", y "350.922", stroke "#fff", width "80.135", height "38.486" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M495.666,390.828h-56.292v31.427h37.85v-0.78c0-4.447,3.623-8.086,8.052-8.086h3.616 c2.838,0,5.34,1.498,6.774,3.742V390.828z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M439.374,423.808v32.966c1.382-2.25,4.016-3.778,7.024-3.778h22.773c4.429,0,8.052-3.639,8.052-8.088 v-21.1H439.374z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M351.459,304.943h37.422v-40.062l-31.048,0.024c-2.591,0.002-4.898-1.241-6.374-3.155V304.943z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M350.039,304.943v-46.104c-0.162-0.635-0.258-1.295-0.258-1.979v-8.776c0-4.43-3.623-8.053-8.053-8.053 h-10.152c-4.429,0-8.053,3.623-8.053,8.053v56.859H350.039z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M390.36,304.943h47.39v-52.942h-21.942v4.807c0,4.429-3.622,8.056-8.052,8.059l-17.396,0.014V304.943z" ] []
-    , rect [ onClick (), prefStyle, x "403.441", y "390.828", stroke "#fff", width "34.309", height "31.427" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M323.523,306.363v11.841c0,4.43-3.624,8.054-8.052,8.054H301.5v23.24h47.173v-43.135H323.523z" ] []
-    , polygon [ onClick (), prefStyle, stroke "#fff", points "401.979,389.408 414.055,389.408 414.055,306.363 380.809,306.363 380.809,422.255 401.979,422.255 " ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M348.673,389.8l-24.155-0.008v100.997l16.914,0.008c3.179,0,5.934-1.87,7.241-4.561V389.8z" ] []
-    , rect [ onClick (), prefStyle, x "350.094", y "306.157", stroke "#fff", width "28.906", height "116.098" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M389.422,423.808h-8.613v-0.108h-30.715v48.993c1.21-2.925,4.095-4.997,7.442-4.997h31.886V423.808z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M390.881,423.753v43.888l38.896,0.055c4.43,0,8.052-3.296,8.052-7.324c0-1.291,0-36.672,0-36.672 L390.881,423.753z" ] []
-    , polygon [ onClick (), prefStyle, stroke "#fff", points "300.144,445.374 300.144,446.812 300.144,465.706 323.079,465.706 323.079,389.8 300.144,389.8" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M273.838,326.258H246.25v86.222h21.211c2.592,0,4.901,1.246,6.376,3.164v-87.713v-1.66V326.258z" ] []
-    , polygon [ onClick (), prefStyle, stroke "#fff", points "299.956,326.258 275.285,326.258 275.285,326.271 275.285,327.931 275.285,388.315 323.078,388.315 323.079,350.729 299.956,350.729 " ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M298.737,445.374V389.8h-23.452v28.866c0.144,0.601,0.229,1.224,0.229,1.866v24.842H298.737z" ] []
-    , rect [ onClick (), prefStyle, x "324.704", y "350.922", stroke "#fff", width "23.969", height "37.329" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M298.737,446.812h-23.224v35.934c0,4.429,3.624,8.052,8.053,8.052h39.513v-23.685h-24.342V446.812z" ] []
-    , rect [ onClick (), prefStyle, x "185.097", y "326.258", stroke "#fff", width "28.628", height "39.3" ] []
-    , rect [ onClick (), prefStyle, x "215.158", y "326.258", stroke "#fff", width "29.342", height "39.3" ] []
-    , rect [ onClick (), prefStyle, x "185.097", y "366.997", stroke "#fff", width "28.628", height "45.482" ] []
-    , rect [ onClick (), prefStyle, x "215.158", y "366.997", stroke "#fff", width "29.342", height "45.482" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M183.665,326.258h-18.982c-4.429,0-8.052,3.624-8.052,8.052v70.117c0,4.429,3.624,8.053,8.052,8.053 h18.982V326.258z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M209.456,456.778h53.341v-21.941c0-4.429-3.624-8.053-8.053-8.053h-45.288V456.778z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M208.023,456.778v-29.994h-44.011c-4.429,0-8.052,3.624-8.052,8.053v21.941H208.023z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M208.023,458.21H155.96v22.77c0,4.43,3.624,8.053,8.052,8.053h44.011V458.21z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M209.456,458.21v30.822h45.288c4.429,0,8.053-3.623,8.053-8.053v-22.77H209.456z" ] []
-    , rect [ onClick (), prefStyle, x "105.81", y "366.987", stroke "#fff", width "34.698", height "39.006" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M104.357,444.871v-77.884h-28.1v13.018c0.705,1.195,1.116,2.581,1.115,4.062l-0.029,60.804H104.357z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M76.257,365.567h64.25v-32.27c0-4.43-3.624-8.053-8.053-8.053H76.257V365.567z" ] []
-    , rect [ onClick (), prefStyle, x "105.81", y "407.413", stroke "#fff", width "34.698", height "37.458" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M77.343,446.277l-0.017,34.702c-0.002,4.43,3.62,8.053,8.049,8.053h47.08c4.429,0,8.053-3.623,8.053-8.053 v-34.702H77.343z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M74.825,366.987v-1.42v-40.322H57.067v50.77h12.257c2.125,0,4.058,0.84,5.5,2.197V366.987z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M55.663,325.245H44.372c-4.429,0-8.052,3.623-8.052,8.053v34.664c0,4.429,3.624,8.053,8.052,8.053h11.291 V325.245z" ] []
-    , path [ onClick (), prefStyle, stroke "#fff", d "M62.363,480.969c0,4.43-3.624,8.055-8.053,8.055h-8.284c-4.429,0-8.053-3.625-8.053-8.055v-27.795 c0-4.428,3.624-8.053,8.053-8.053h8.284c4.429,0,8.053,3.625,8.053,8.053V480.969z" ] []
+    [ path (List.concat [ prefAttribute, [ stroke "#fff", d "M558.193,113.86c4.429,0,8.052-3.624,8.052-8.053V27.819c0-4.429-3.623-8.053-8.052-8.053H425.551 c-4.43,0-8.052,3.624-8.052,8.053v99.398c0,4.429,3.622,8.053,8.052,8.053h21.082c4.429,0,8.052-3.624,8.052-8.053v-5.305 c0-4.429,3.623-8.052,8.052-8.052H558.193z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M472.867,177.426h1.433h57.013v-20.581c0-4.429-3.623-8.052-8.052-8.052h-99.4 c-4.429,0-8.053,3.624-8.053,8.052v20.581H472.867z" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "474.3", y "178.855", stroke "#fff", width "57.013", height "39.514" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "474.3", y "219.799", stroke "#fff", width "57.013", height "44.696" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "415.808", y "178.855", stroke "#fffff", width "57.06", height "39.514" ] ]) []
+    , polygon (List.concat [ prefAttribute, [ stroke "#fff", points "439.373,264.495 472.867,264.495 472.867,219.799 415.808,219.799 415.808,250.699 439.373,250.699" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "439.373", y "265.928", stroke "#fff", width "91.939", height "39.191" ] ]) []
+    , polygon (List.concat [ prefAttribute, [ stroke "#fff", points "497.111,364.525 531.312,364.525 531.229,306.363 497.027,306.363" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "457.205", y "306.363", stroke "#fff", width "38.461", height "43.135" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "415.531", y "306.363", stroke "#fff", width "40.223", height "43.135" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "415.531", y "350.922", stroke "#fff", width "80.135", height "38.486" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M497.111,365.955v55.52h-0.168v35.881c0,4.448,3.623,8.086,8.052,8.086h18.266 c4.429,0,8.052-3.638,8.052-8.086v-91.4H497.111z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M495.666,390.828h-56.292v31.427h37.85v-0.78c0-4.447,3.623-8.086,8.052-8.086h3.616 c2.838,0,5.34,1.498,6.774,3.742V390.828z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M439.374,423.808v32.966c1.382-2.25,4.016-3.778,7.024-3.778h22.773c4.429,0,8.052-3.639,8.052-8.088 v-21.1H439.374z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M390.36,304.943h47.39v-52.942h-21.942v4.807c0,4.429-3.622,8.056-8.052,8.059l-17.396,0.014V304.943z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M351.459,304.943h37.422v-40.062l-31.048,0.024c-2.591,0.002-4.898-1.241-6.374-3.155V304.943z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M350.039,304.943v-46.104c-0.162-0.635-0.258-1.295-0.258-1.979v-8.776c0-4.43-3.623-8.053-8.053-8.053 h-10.152c-4.429,0-8.053,3.623-8.053,8.053v56.859H350.039z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M323.523,306.363v11.841c0,4.43-3.624,8.054-8.052,8.054H301.5v23.24h47.173v-43.135H323.523z" ] ]) []
+    , polygon (List.concat [ prefAttribute, [ stroke "#fff", points "401.979,389.408 414.055,389.408 414.055,306.363 380.809,306.363 380.809,422.255 401.979,422.255 " ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "403.441", y "390.828", stroke "#fff", width "34.309", height "31.427" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "350.094", y "306.157", stroke "#fff", width "28.906", height "116.098" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M390.881,423.753v43.888l38.896,0.055c4.43,0,8.052-3.296,8.052-7.324c0-1.291,0-36.672,0-36.672 L390.881,423.753z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M389.422,423.808h-8.613v-0.108h-30.715v48.993c1.21-2.925,4.095-4.997,7.442-4.997h31.886V423.808z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M348.673,389.8l-24.155-0.008v100.997l16.914,0.008c3.179,0,5.934-1.87,7.241-4.561V389.8z" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "324.704", y "350.922", stroke "#fff", width "23.969", height "37.329" ] ]) []
+    , polygon (List.concat [ prefAttribute, [ stroke "#fff", points "299.956,326.258 275.285,326.258 275.285,326.271 275.285,327.931 275.285,388.315 323.078,388.315 323.079,350.729 299.956,350.729 " ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M298.737,445.374V389.8h-23.452v28.866c0.144,0.601,0.229,1.224,0.229,1.866v24.842H298.737z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M273.838,326.258H246.25v86.222h21.211c2.592,0,4.901,1.246,6.376,3.164v-87.713v-1.66V326.258z" ] ]) []
+    , polygon (List.concat [ prefAttribute, [ stroke "#fff", points "300.144,445.374 300.144,446.812 300.144,465.706 323.079,465.706 323.079,389.8 300.144,389.8" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M298.737,446.812h-23.224v35.934c0,4.429,3.624,8.052,8.053,8.052h39.513v-23.685h-24.342V446.812z" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "215.158", y "326.258", stroke "#fff", width "29.342", height "39.3" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "185.097", y "326.258", stroke "#fff", width "28.628", height "39.3" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "215.158", y "366.997", stroke "#fff", width "29.342", height "45.482" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "185.097", y "366.997", stroke "#fff", width "28.628", height "45.482" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M183.665,326.258h-18.982c-4.429,0-8.052,3.624-8.052,8.052v70.117c0,4.429,3.624,8.053,8.052,8.053 h18.982V326.258z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M209.456,458.21v30.822h45.288c4.429,0,8.053-3.623,8.053-8.053v-22.77H209.456z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M209.456,456.778h53.341v-21.941c0-4.429-3.624-8.053-8.053-8.053h-45.288V456.778z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M208.023,456.778v-29.994h-44.011c-4.429,0-8.052,3.624-8.052,8.053v21.941H208.023z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M208.023,458.21H155.96v22.77c0,4.43,3.624,8.053,8.052,8.053h44.011V458.21z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M76.257,365.567h64.25v-32.27c0-4.43-3.624-8.053-8.053-8.053H76.257V365.567z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M74.825,366.987v-1.42v-40.322H57.067v50.77h12.257c2.125,0,4.058,0.84,5.5,2.197V366.987z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M55.663,325.245H44.372c-4.429,0-8.052,3.623-8.052,8.053v34.664c0,4.429,3.624,8.053,8.052,8.053h11.291 V325.245z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M104.357,444.871v-77.884h-28.1v13.018c0.705,1.195,1.116,2.581,1.115,4.062l-0.029,60.804H104.357z" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "105.81", y "366.987", stroke "#fff", width "34.698", height "39.006" ] ]) []
+    , rect (List.concat [ prefAttribute, [ x "105.81", y "407.413", stroke "#fff", width "34.698", height "37.458" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M77.343,446.277l-0.017,34.702c-0.002,4.43,3.62,8.053,8.049,8.053h47.08c4.429,0,8.053-3.623,8.053-8.053 v-34.702H77.343z" ] ]) []
+    , path (List.concat [ prefAttribute, [ stroke "#fff", d "M62.363,480.969c0,4.43-3.624,8.055-8.053,8.055h-8.284c-4.429,0-8.053-3.625-8.053-8.055v-27.795 c0-4.428,3.624-8.053,8.053-8.053h8.284c4.429,0,8.053,3.625,8.053,8.053V480.969z" ] ]) []
     ]

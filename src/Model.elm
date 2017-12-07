@@ -32,6 +32,7 @@ type alias Model =
     , drawerPosition : Animation.State
     , searchFromMapShow : Bool
     , selectedPrefNum : Int
+    , hoveredPrefNum : Int
     , windowWidth : Int
     }
 

@@ -36,5 +36,6 @@ type Msg
     | SubmitSearch
     | ToggleMap
     | ClickPrefecture Int
+    | HoverPrefecture Int
     | Animate Animation.Msg
     | WindowWidth Size
