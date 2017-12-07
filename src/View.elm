@@ -15,7 +15,6 @@ import RemoteData
 import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(..))
 import Search.View as Search
-import Style as Style
 
 
 view : Model -> Html Msg
@@ -25,10 +24,10 @@ view model =
         , mainView model
         , if model.toggleSearch then
             Search.searchFormView model
-          else if model.datePickerShow then
-            Search.DatePicker.view model.datePickerModel
           else if model.numOfPeopleShow then
             Search.howManyPeopleView model
+          else if model.searchFromMapShow then
+            Search.searchFromMapView model
           else
             text ""
         ]
@@ -38,19 +37,8 @@ header_ : Model -> Html Msg
 header_ model =
     -- header [ style Style.header ]
     header [ class "flex items-center bg-navy h3 shadow-2" ]
-        [ a
-            (case model.drawerState of
-                True ->
-                    []
-
-                False ->
-                    [ onClick (ToggleDrawer model.drawerState) ]
-            )
-            [ i
-                [ class "white ma2 material-icons md-36 pointer"
-                ]
-                [ text "menu" ]
-            ]
+        [ a [ onClick (ToggleDrawer model.drawerState) ]
+            [ i [ class "white ma2 material-icons md-36 pointer" ] [ text "menu" ] ]
         , a [ class "link white f2", href "#" ] [ text "elm-sample-spa" ]
         , div [ class "ml-auto mr2 flex" ]
             (List.map viewLinkTab [ "birds", "cats", "dogs", "map", "history" ])
@@ -95,7 +83,7 @@ mainView model =
 
 homeView : Model -> Html Msg
 homeView model =
-    div [ style Style.boxed ]
+    div []
         [ div
             [ class "center"
             , style [ ( "width", "500px" ) ]
@@ -172,6 +160,7 @@ homeMinimalView model =
                         ]
                 , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer", onClick SubmitSearch ] [ text "検索" ]
                 ]
+            , div [ class "db br2 shadow-1 pa2 ma2 pointer", onClick ToggleMap ] [ text "show map" ]
             , searchResultBusList model
             ]
         ]

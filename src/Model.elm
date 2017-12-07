@@ -2,6 +2,7 @@ module Model exposing (..)
 
 import Animation exposing (px)
 import Date exposing (Date)
+import Mouse
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
 
@@ -30,6 +31,12 @@ type alias Model =
     , datePickerShow : Bool
     , buses : WebData (List Bus)
     , drawerPosition : Animation.State
+    , searchFromMapShow : Bool
+    , depPrefNum : Int
+    , destPrefNum : Int
+    , hoveredPrefNum : Int
+    , hoveredMap : Bool
+    , positionOfMouse : Mouse.Position
     , windowWidth : Int
     }
 

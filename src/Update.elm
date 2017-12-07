@@ -169,6 +169,32 @@ update msg model =
             }
                 ! []
 
+        ToggleMap ->
+            { model | searchFromMapShow = not model.searchFromMapShow } ! []
+
+        ClickPrefecture prefNum ->
+            case model.citySearch of
+                Model.Deperture ->
+                    { model | depPrefNum = prefNum + 1, citySearch = Model.Destination } ! []
+
+                Model.Destination ->
+                    { model | destPrefNum = prefNum + 1, citySearch = Model.Deperture } ! []
+
+        ClickDeperture ->
+            { model | citySearch = Model.Deperture } ! []
+
+        ClickDestination ->
+            { model | citySearch = Model.Destination } ! []
+
+        MoveMouse position ->
+            { model | positionOfMouse = position } ! []
+
+        HoverPrefecture prefNum ->
+            { model | hoveredPrefNum = prefNum + 1, hoveredMap = True } ! []
+
+        HoverOutMap ->
+            { model | hoveredMap = False } ! []
+
         WindowWidth size ->
             { model | windowWidth = size.width } ! []
 

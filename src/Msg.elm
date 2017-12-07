@@ -5,6 +5,7 @@ import Date
 import Dom
 import Http
 import Model exposing (Place)
+import Mouse
 import Navigation
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
@@ -34,5 +35,12 @@ type Msg
     | ToggleDatePicker DatePicker.Check
     | OnFetchBuses (WebData (List Model.Bus))
     | SubmitSearch
+    | ToggleMap
+    | ClickPrefecture Int
+    | HoverPrefecture Int
+    | HoverOutMap
+    | ClickDeperture
+    | ClickDestination
+    | MoveMouse Mouse.Position
     | Animate Animation.Msg
     | WindowWidth Size
