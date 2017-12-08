@@ -2,6 +2,7 @@ module Model exposing (..)
 
 import Animation exposing (px)
 import Date exposing (Date)
+import Draggable
 import Mouse
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
@@ -37,6 +38,9 @@ type alias Model =
     , hoveredPrefNum : Int
     , hoveredMap : Bool
     , positionOfMouse : Mouse.Position
+    , mapPosition : MapPosition
+    , mapZoom : Float
+    , drag : Draggable.State String
     , windowWidth : Int
     }
 
@@ -131,10 +135,9 @@ type alias Bus =
     }
 
 
-type alias StyleOfConditions =
-    { searchFormView : Animation.State
-    , howManyPeopleView : Animation.State
-    , datePickerView : Animation.State
+type alias MapPosition =
+    { x : Float
+    , y : Float
     }
 
 

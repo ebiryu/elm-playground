@@ -4,6 +4,7 @@ import Animation
 import Commands exposing (fetchPlaces)
 import Date
 import Date.Extra.Create exposing (dateFromFields)
+import Draggable
 import Model exposing (Model, Route(..))
 import Mouse
 import Msg exposing (Msg(..))
@@ -62,6 +63,9 @@ init location =
     , hoveredPrefNum = 48
     , hoveredMap = False
     , positionOfMouse = { x = 0, y = 0 }
+    , mapPosition = { x = 0, y = 0 }
+    , mapZoom = 1
+    , drag = Draggable.init
     , windowWidth = 0
     }
         ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]
@@ -78,6 +82,7 @@ subscriptions model =
             [ model.drawerPosition
             ]
         , Window.resizes WindowWidth
+        , Draggable.subscriptions DragMsg model.drag
 
         -- , case model.hoveredMap of
         --     True ->

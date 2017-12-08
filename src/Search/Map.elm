@@ -1,22 +1,45 @@
 module Search.Map exposing (..)
 
+import Draggable
 import Element
 import Html
+import Json.Decode as Decode
 import Model exposing (Model)
 import Msg exposing (Msg)
 import Style
 import Svg exposing (..)
-import Svg.Attributes exposing (d, fill, height, points, stroke, style, viewBox, width, x, y)
-import Svg.Events exposing (onClick, onMouseOut, onMouseOver)
+import Svg.Attributes exposing (d, fill, height, points, scale, stroke, style, transform, viewBox, width, x, y)
+import Svg.Events exposing (on, onClick, onMouseOut, onMouseOver)
 import Todofuken
+import VirtualDom
 
 
 maps : Model -> Html.Html Msg
 maps model =
-    svg [ width "100%", height "100%", viewBox "0 0 600 500" ]
+    let
+        ( cx, cy ) =
+            ( model.mapPosition.x, model.mapPosition.y )
+
+        ( halfWidth, halfHeight ) =
+            ( 600 / model.mapZoom / 2, 500 / model.mapZoom / 2 )
+
+        panning =
+            "translate(" ++ toString (halfWidth + cx) ++ ", " ++ toString (halfHeight + cy) ++ ")"
+
+        zooming =
+            "translate(" ++ toString (-halfWidth - cx) ++ ", " ++ toString (-halfHeight - cy) ++ ")" ++ "scale(" ++ toString model.mapZoom ++ ")" ++ "translate(" ++ toString (halfWidth + cx) ++ ", " ++ toString (halfHeight + cy) ++ ")"
+
+        offset =
+            "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
+    in
+    svg ([ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ++ Draggable.touchTriggers "" Msg.DragMsg)
         [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
-        , g [] (mapClick model)
-        , polygon [ borderStyle, fill "#fff", points "67.771,497.093 66.352,497.093 66.352,434.494 13.083,434.494 13.083,433.074 67.771,433.074 " ] []
+        , g [ transform (panning ++ " " ++ zooming) ]
+            [ g [ transform offset ]
+                [ g [] (mapClick model)
+                , polygon [ borderStyle, fill "#fff", points "67.771,497.093 66.352,497.093 66.352,434.494 13.083,434.494 13.083,433.074 67.771,433.074 " ] []
+                ]
+            ]
         ]
 
 
@@ -94,6 +117,15 @@ destPrefStyle =
 borderStyle : Svg.Attribute msg
 borderStyle =
     Svg.Attributes.style "fill:#aaa;"
+
+
+onScroll : (Float -> msg) -> Svg.Attribute msg
+onScroll zoom =
+    let
+        options =
+            VirtualDom.Options True True
+    in
+    VirtualDom.onWithOptions "wheel" options (Decode.map zoom <| Decode.field "deltaY" Decode.float)
 
 
 prefElements : List ( List (Svg.Attribute msg) -> List (Svg.Svg msg) -> Svg.Svg msg, List (Svg.Attribute msg) )

@@ -3,6 +3,7 @@ module Msg exposing (..)
 import Animation
 import Date
 import Dom
+import Draggable
 import Http
 import Model exposing (Place)
 import Mouse
@@ -42,5 +43,8 @@ type Msg
     | ClickDeperture
     | ClickDestination
     | MoveMouse Mouse.Position
+    | MapZoom Float
+    | OnDragBy Draggable.Delta
+    | DragMsg (Draggable.Msg String)
     | Animate Animation.Msg
     | WindowWidth Size
