@@ -4,6 +4,7 @@ import Animation exposing (px)
 import Commands
 import Date.Extra.Duration as Duration
 import Dom
+import Draggable
 import Ease
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
@@ -195,6 +196,31 @@ update msg model =
         HoverOutMap ->
             { model | hoveredMap = False } ! []
 
+        MapZoom factor ->
+            let
+                newZoom =
+                    (factor * 0.005)
+                        |> (-) model.mapZoom
+                        |> clamp 1 2
+            in
+            ( { model | mapZoom = newZoom }, Cmd.none )
+
+        OnDragBy ( dx, dy ) ->
+            let
+                pos =
+                    model.mapPosition
+
+                newX =
+                    (pos.x + dx) |> clamp -300 300
+
+                newY =
+                    (pos.y + dy) |> clamp -250 250
+            in
+            { model | mapPosition = { x = newX, y = newY } } ! []
+
+        DragMsg dragMsg ->
+            Draggable.update dragConfig dragMsg model
+
         WindowWidth size ->
             { model | windowWidth = size.width } ! []
 
@@ -218,3 +244,8 @@ drawerSliceIn style =
 drawerSliceOut : Animation.State -> Animation.State
 drawerSliceOut style =
     Animation.queue [ Animation.set [ Animation.left (Animation.rem -16) ] ] style
+
+
+dragConfig : Draggable.Config String Msg
+dragConfig =
+    Draggable.basicConfig OnDragBy
