@@ -225,10 +225,25 @@ update msg model =
             Draggable.update dragConfig dragMsg model
 
         TimeTouchedMap time ->
-            { model | timeTouchedMap = Debug.log "time" time } ! []
+            { model | timeTouchedMap = time } ! []
 
         SingleStart int event ->
-            model ! [ Task.perform TimeTouchedMap Time.now ]
+            let
+                eventPositions =
+                    Dict.values <| Touch.touches event
+
+                oldPosition =
+                    model.singleFingerCoordinate
+
+                position =
+                    case eventPositions of
+                        [ x1 ] ->
+                            { x = x1.clientX, y = x1.clientY }
+
+                        _ ->
+                            oldPosition
+            in
+            { model | singleFingerCoordinate = position } ! [ Task.perform TimeTouchedMap Time.now ]
 
         SingleEnd int event ->
             model ! [ Task.perform (TimeLeftMap int event) Time.now ]
@@ -243,67 +258,103 @@ update msg model =
                 ( model, Cmd.none )
 
         Tick time ->
-            model ! []
+            if time - model.timeTouchedMap > 300 then
+                { model | toggleSingleFingerMove = True } ! []
+            else
+                model ! []
 
         MultiStart int event ->
             let
-                numberOfFinger =
-                    List.length <| Dict.values <| Touch.touches event
-
                 eventPositions =
                     Dict.values <| Touch.touches event
 
                 oldPositions =
                     model.positionOfMultiTouch
 
-                positions =
-                    case eventPositions of
-                        [ x1, x2 ] ->
-                            { x1 = x1.clientX, y1 = x1.clientY, x2 = x2.clientX, y2 = x2.clientY }
-
-                        _ ->
-                            oldPositions
-            in
-            update (SingleStart int event) { model | positionOfMultiTouch = positions }
-
-        MultiMove event ->
-            let
-                oldPositions =
-                    model.positionOfMultiTouch
-
                 oldDistance =
-                    sqrt ((oldPositions.x2 - oldPositions.x1) ^ 2 + (oldPositions.y2 - oldPositions.y1) ^ 2)
-
-                eventPositions =
-                    Dict.values <| Touch.changedTouches event
+                    model.distanceOfMultiTouch
 
                 positions =
                     case eventPositions of
-                        [ x1, x2 ] ->
-                            { x1 = x1.clientX, y1 = x1.clientY, x2 = x2.clientX, y2 = x2.clientY }
+                        [ c ] ->
+                            { x = c.clientX, y = c.clientY }
 
                         _ ->
                             oldPositions
 
                 distance =
-                    sqrt ((positions.x2 - positions.x1) ^ 2 + (positions.y2 - positions.y1) ^ 2)
+                    case eventPositions of
+                        [ c1, c2 ] ->
+                            sqrt ((c2.clientX - c1.clientX) ^ 2 + (c2.clientY - c1.clientY) ^ 2)
+
+                        _ ->
+                            oldDistance
+
+                fingers =
+                    case List.length eventPositions of
+                        2 ->
+                            Model.Two
+
+                        _ ->
+                            Model.One
+            in
+            update (SingleStart int event)
+                { model
+                    | positionOfMultiTouch = positions
+                    , distanceOfMultiTouch = distance
+                    , fingers = fingers
+                }
+
+        MultiMove event ->
+            let
+                eventPositions =
+                    Dict.values <| Touch.changedTouches event
+            in
+            case model.fingers of
+                Model.Two ->
+                    update (Zooming event eventPositions) model
+
+                Model.One ->
+                    update (Moving event eventPositions) model
+
+        Zooming event eventPositions ->
+            let
+                oldDistance =
+                    model.distanceOfMultiTouch
+
+                distance =
+                    case eventPositions of
+                        [ c1, c2 ] ->
+                            sqrt ((c2.clientX - c1.clientX) ^ 2 + (c2.clientY - c1.clientY) ^ 2)
+
+                        _ ->
+                            oldDistance
 
                 newZoom =
                     ((oldDistance - distance) * 0.005)
                         |> (-) model.mapZoom
                         |> clamp 1 2
+            in
+            { model | distanceOfMultiTouch = distance, mapZoom = newZoom } ! []
+
+        Moving event eventPositions ->
+            let
+                oldPositions =
+                    model.positionOfMultiTouch
+
+                positions =
+                    case eventPositions of
+                        [ c ] ->
+                            { x = c.clientX, y = c.clientY }
+
+                        _ ->
+                            oldPositions
 
                 pos =
                     model.mapPosition
 
-                ( oldCx, oldCy ) =
-                    ( (oldPositions.x1 + oldPositions.x2) / 2, (oldPositions.y1 + oldPositions.y2) / 2 )
-
-                ( cx, cy ) =
-                    ( (positions.x1 + positions.x2) / 2, (positions.y1 + positions.y2) / 2 )
-
                 ( dx, dy ) =
-                    ( cx - oldCx, cy - oldCy )
+                    ( positions.x - oldPositions.x, positions.y - oldPositions.y )
 
                 newX =
                     (pos.x + dx) |> clamp -300 300
@@ -311,7 +362,11 @@ update msg model =
                 newY =
                     (pos.y + dy) |> clamp -250 250
             in
-            { model | positionOfMultiTouch = positions, mapZoom = newZoom, mapPosition = { x = newX, y = newY } } ! []
+            { model
+                | positionOfMultiTouch = positions
+                , mapPosition = Debug.log "map" { x = newX, y = newY }
+            }
+                ! []
 
         Resize size ->
             { model | device = Element.classifyDevice size } ! []

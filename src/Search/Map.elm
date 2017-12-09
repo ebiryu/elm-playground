@@ -36,7 +36,7 @@ maps model =
         offset =
             "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
     in
-    Html.div [ MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove, HtmlA.class "h-100" ]
+    Html.div [ MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
         [ svg (List.concat [ svgSize model, [ viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ])
             [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
             , g [ transform (panning ++ " " ++ zooming) ]

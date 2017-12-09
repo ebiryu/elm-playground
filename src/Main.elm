@@ -68,8 +68,12 @@ init location =
     , mapPosition = { x = 0, y = 0 }
     , mapZoom = 1
     , drag = Draggable.init
-    , positionOfMultiTouch = { x1 = 0, y1 = 0, x2 = 0, y2 = 0 }
+    , positionOfMultiTouch = { x = 0, y = 0 }
+    , distanceOfMultiTouch = 0
     , timeTouchedMap = 0
+    , toggleSingleFingerMove = False
+    , singleFingerCoordinate = { x = 0, y = 0 }
+    , fingers = Model.One
     , device = { width = 0, height = 0, phone = False, tablet = False, desktop = False, bigDesktop = False, portrait = False }
     }
         ! [ fetchPlaces

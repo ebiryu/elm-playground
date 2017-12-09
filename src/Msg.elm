@@ -55,5 +55,7 @@ type Msg
     | SingleEnd Int Touch.Event
     | MultiStart Int Touch.Event
     | MultiMove Touch.Event
+    | Zooming Touch.Event (List Touch.Coordinates)
+    | Moving Touch.Event (List Touch.Coordinates)
     | Animate Animation.Msg
     | Resize Window.Size

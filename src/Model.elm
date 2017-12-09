@@ -43,8 +43,12 @@ type alias Model =
     , mapPosition : MapPosition
     , mapZoom : Float
     , drag : Draggable.State String
-    , positionOfMultiTouch : MultiTouchPosition
+    , positionOfMultiTouch : MapPosition
+    , distanceOfMultiTouch : Float
     , timeTouchedMap : Time
+    , toggleSingleFingerMove : Bool
+    , singleFingerCoordinate : MapPosition
+    , fingers : Finger
     , device : Element.Device
     }
 
@@ -145,12 +149,9 @@ type alias MapPosition =
     }
 
 
-type alias MultiTouchPosition =
-    { x1 : Float
-    , y1 : Float
-    , x2 : Float
-    , y2 : Float
-    }
+type Finger
+    = One
+    | Two
 
 
 initDrawerPosition : Animation.State
