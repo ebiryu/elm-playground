@@ -6,6 +6,7 @@ import Draggable
 import Mouse
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
+import Time exposing (Time)
 
 
 type alias Model =
@@ -41,6 +42,8 @@ type alias Model =
     , mapPosition : MapPosition
     , mapZoom : Float
     , drag : Draggable.State String
+    , positionOfMultiTouch : MultiTouchPosition
+    , timeTouchedMap : Time
     , windowWidth : Int
     }
 
@@ -138,6 +141,14 @@ type alias Bus =
 type alias MapPosition =
     { x : Float
     , y : Float
+    }
+
+
+type alias MultiTouchPosition =
+    { x1 : Float
+    , y1 : Float
+    , x2 : Float
+    , y2 : Float
     }
 
 

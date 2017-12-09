@@ -12,6 +12,7 @@ import Navigation
 import RemoteData
 import Search.DatePickerUpdate as DatePicker
 import Task
+import Time
 import Update exposing (update)
 import UrlParser as Url
 import View exposing (view)
@@ -66,9 +67,16 @@ init location =
     , mapPosition = { x = 0, y = 0 }
     , mapZoom = 1
     , drag = Draggable.init
+    , positionOfMultiTouch = { x1 = 0, y1 = 0, x2 = 0, y2 = 0 }
+    , timeTouchedMap = 0
     , windowWidth = 0
     }
-        ! [ fetchPlaces, Commands.fetchCityList, Task.perform DateNow Date.now, Task.perform WindowWidth Window.size ]
+        ! [ fetchPlaces
+
+          -- , Commands.fetchCityList
+          , Task.perform DateNow Date.now
+          , Task.perform WindowWidth Window.size
+          ]
 
 
 
@@ -83,6 +91,7 @@ subscriptions model =
             ]
         , Window.resizes WindowWidth
         , Draggable.subscriptions DragMsg model.drag
+        , Time.every (500 * Time.millisecond) Tick
 
         -- , case model.hoveredMap of
         --     True ->

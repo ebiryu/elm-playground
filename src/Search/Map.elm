@@ -6,11 +6,14 @@ import Html
 import Json.Decode as Decode
 import Model exposing (Model)
 import Msg exposing (Msg)
+import MultiTouch
+import SingleTouch
 import Style
 import Svg exposing (..)
 import Svg.Attributes exposing (d, fill, height, points, scale, stroke, style, transform, viewBox, width, x, y)
 import Svg.Events exposing (on, onClick, onMouseOut, onMouseOver)
 import Todofuken
+import Touch
 import VirtualDom
 
 
@@ -32,12 +35,14 @@ maps model =
         offset =
             "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
     in
-    svg ([ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ++ Draggable.touchTriggers "" Msg.DragMsg)
-        [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
-        , g [ transform (panning ++ " " ++ zooming) ]
-            [ g [ transform offset ]
-                [ g [] (mapClick model)
-                , polygon [ borderStyle, fill "#fff", points "67.771,497.093 66.352,497.093 66.352,434.494 13.083,434.494 13.083,433.074 67.771,433.074 " ] []
+    Html.div [ MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
+        [ svg [ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ]
+            [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
+            , g [ transform (panning ++ " " ++ zooming) ]
+                [ g [ transform offset ]
+                    [ g [] (mapClick model)
+                    , polygon [ borderStyle, fill "#fff", points "67.771,497.093 66.352,497.093 66.352,434.494 13.083,434.494 13.083,433.074 67.771,433.074 " ] []
+                    ]
                 ]
             ]
         ]
@@ -58,6 +63,12 @@ mapClick model =
 
                         HoverOut ->
                             Msg.HoverOutMap
+
+                        SingleTouchStart event ->
+                            Msg.MultiStart i event
+
+                        SingleLeave event ->
+                            Msg.SingleEnd i event
                 )
                 pref
         )
@@ -80,23 +91,25 @@ indexedPrefs model =
 
 prefAttribute : List (Svg.Attribute Event)
 prefAttribute =
-    [ onClick Click, onMouseOver Hover, onMouseOut HoverOut, prefStyle ]
+    [ MultiTouch.onStart SingleTouchStart, MultiTouch.onEnd SingleLeave, onClick Click, onMouseOver Hover, onMouseOut HoverOut, prefStyle ]
 
 
 depPrefAttribute : List (Svg.Attribute Event)
 depPrefAttribute =
-    [ onClick Click, onMouseOver Hover, onMouseOut HoverOut, depPrefStyle ]
+    [ MultiTouch.onStart SingleTouchStart, onClick Click, onMouseOver Hover, onMouseOut HoverOut, depPrefStyle ]
 
 
 destPrefAttribute : List (Svg.Attribute Event)
 destPrefAttribute =
-    [ onClick Click, onMouseOver Hover, onMouseOut HoverOut, destPrefStyle ]
+    [ MultiTouch.onStart SingleTouchStart, onClick Click, onMouseOver Hover, onMouseOut HoverOut, destPrefStyle ]
 
 
 type Event
     = Click
     | Hover
     | HoverOut
+    | SingleTouchStart Touch.Event
+    | SingleLeave Touch.Event
 
 
 prefStyle : Svg.Attribute msg
