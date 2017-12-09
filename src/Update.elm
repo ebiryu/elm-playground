@@ -7,6 +7,7 @@ import Dict
 import Dom
 import Draggable
 import Ease
+import Element
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search
@@ -312,8 +313,8 @@ update msg model =
             in
             { model | positionOfMultiTouch = positions, mapZoom = newZoom, mapPosition = { x = newX, y = newY } } ! []
 
-        WindowWidth size ->
-            { model | windowWidth = size.width } ! []
+        Resize size ->
+            { model | device = Element.classifyDevice size } ! []
 
 
 easing : Animation.Interpolation

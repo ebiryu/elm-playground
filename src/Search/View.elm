@@ -37,28 +37,29 @@ styleSheet model =
         [ Style.style None []
         , Style.style Header [ Border.bottom 1 ]
         , Style.style Deperture
-            [ Border.bottom 2
-            , Style.cursor "pointer"
+            [ Style.cursor "pointer"
+            , Color.border (rgb 48 63 159)
             , if model.citySearch == Model.Deperture then
-                Color.border (rgb 48 63 159)
+                Border.bottom 6
               else
-                Color.border borderColor
+                Border.bottom 3
             ]
         , Style.style Destination
-            [ Border.bottom 2
-            , Style.cursor "pointer"
+            [ Style.cursor "pointer"
+            , Color.border (rgb 255 87 34)
             , if model.citySearch == Model.Destination then
-                Color.border (rgb 255 87 34)
+                Border.bottom 6
               else
-                Color.border borderColor
+                Border.bottom 3
             ]
         , Style.style Date
-            [ Border.bottom 2, Style.cursor "pointer", Color.border borderColor ]
+            [ Border.bottom 3, Style.cursor "pointer", Color.border borderColor ]
         , Style.style Map [ Shadow.inset { offset = ( 0, 0 ), size = 2, blur = 10, color = rgb 150 150 150 } ]
         , Style.style Submit
             [ Style.cursor "pointer"
-            , Color.background (rgb 160 160 160)
-            , Color.text (rgb 255 255 255)
+            , Color.border (rgb 160 160 160)
+            , Color.text (rgb 20 20 20)
+            , Border.all 3
             , Border.rounded 2
             ]
         ]
@@ -75,13 +76,13 @@ searchFromMapView model =
         [ Element.layout (styleSheet model) <|
             column None
                 [ EA.height (EA.percent 100) ]
-                [ el Header [] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
+                [ el Header [ EA.height (EA.px 48) ] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
+                , el Map [ EA.height EA.fill ] (Element.html (Map.maps model))
                 , el None
-                    [ center, EA.width (EA.px 360) ]
+                    [ EA.height (EA.px 200), center, EA.width (EA.px 360) ]
                     (column None
                         [ spacing 5 ]
-                        [ el Map [] (Element.html (Map.maps model))
-                        , row None
+                        [ row None
                             [ spacing 10, EA.padding 10 ]
                             [ column Deperture
                                 [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]

@@ -3,6 +3,7 @@ module Model exposing (..)
 import Animation exposing (px)
 import Date exposing (Date)
 import Draggable
+import Element
 import Mouse
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
@@ -44,7 +45,7 @@ type alias Model =
     , drag : Draggable.State String
     , positionOfMultiTouch : MultiTouchPosition
     , timeTouchedMap : Time
-    , windowWidth : Int
+    , device : Element.Device
     }
 
 

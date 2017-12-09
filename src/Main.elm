@@ -5,6 +5,7 @@ import Commands exposing (fetchPlaces)
 import Date
 import Date.Extra.Create exposing (dateFromFields)
 import Draggable
+import Element
 import Model exposing (Model, Route(..))
 import Mouse
 import Msg exposing (Msg(..))
@@ -69,13 +70,13 @@ init location =
     , drag = Draggable.init
     , positionOfMultiTouch = { x1 = 0, y1 = 0, x2 = 0, y2 = 0 }
     , timeTouchedMap = 0
-    , windowWidth = 0
+    , device = { width = 0, height = 0, phone = False, tablet = False, desktop = False, bigDesktop = False, portrait = False }
     }
         ! [ fetchPlaces
 
           -- , Commands.fetchCityList
           , Task.perform DateNow Date.now
-          , Task.perform WindowWidth Window.size
+          , Task.perform Resize Window.size
           ]
 
 
@@ -89,7 +90,7 @@ subscriptions model =
         [ Animation.subscription Animate
             [ model.drawerPosition
             ]
-        , Window.resizes WindowWidth
+        , Window.resizes Resize
         , Draggable.subscriptions DragMsg model.drag
         , Time.every (500 * Time.millisecond) Tick
 

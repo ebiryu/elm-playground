@@ -3,6 +3,7 @@ module Search.Map exposing (..)
 import Draggable
 import Element
 import Html
+import Html.Attributes as HtmlA
 import Json.Decode as Decode
 import Model exposing (Model)
 import Msg exposing (Msg)
@@ -35,8 +36,8 @@ maps model =
         offset =
             "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
     in
-    Html.div [ MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
-        [ svg [ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ]
+    Html.div [ MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove, HtmlA.class "h-100" ]
+        [ svg (List.concat [ svgSize model, [ viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ])
             [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
             , g [ transform (panning ++ " " ++ zooming) ]
                 [ g [ transform offset ]
@@ -46,6 +47,14 @@ maps model =
                 ]
             ]
         ]
+
+
+svgSize : Model -> List (Svg.Attribute msg)
+svgSize { device } =
+    if device.phone then
+        [ width "100%", height "100%" ]
+    else
+        [ width "100%", height "500px" ]
 
 
 mapClick : Model -> List (Svg Msg)

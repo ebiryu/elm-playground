@@ -56,4 +56,4 @@ type Msg
     | MultiStart Int Touch.Event
     | MultiMove Touch.Event
     | Animate Animation.Msg
-    | WindowWidth Size
+    | Resize Window.Size
