@@ -56,7 +56,7 @@ mainView model =
     div []
         [ case model.currentRoute of
             Just Home ->
-                if model.windowWidth < 550 then
+                if model.device.phone then
                     homeMinimalView model
                 else
                     homeView model

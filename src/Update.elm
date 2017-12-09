@@ -3,15 +3,18 @@ module Update exposing (..)
 import Animation exposing (px)
 import Commands
 import Date.Extra.Duration as Duration
+import Dict
 import Dom
 import Draggable
 import Ease
+import Element
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search
 import Search.DatePickerUpdate as DatePicker
 import Task
 import Time
+import Touch
 import UrlParser as Url
 
 
@@ -221,8 +224,152 @@ update msg model =
         DragMsg dragMsg ->
             Draggable.update dragConfig dragMsg model
 
-        WindowWidth size ->
-            { model | windowWidth = size.width } ! []
+        TimeTouchedMap time ->
+            { model | timeTouchedMap = time } ! []
+
+        SingleStart int event ->
+            let
+                eventPositions =
+                    Dict.values <| Touch.touches event
+
+                oldPosition =
+                    model.singleFingerCoordinate
+
+                position =
+                    case eventPositions of
+                        [ x1 ] ->
+                            { x = x1.clientX, y = x1.clientY }
+
+                        _ ->
+                            oldPosition
+            in
+            { model | singleFingerCoordinate = position } ! [ Task.perform TimeTouchedMap Time.now ]
+
+        SingleEnd int event ->
+            model ! [ Task.perform (TimeLeftMap int event) Time.now ]
+
+        TimeLeftMap int event time ->
+            if time - model.timeTouchedMap < 300 then
+                if int <= 46 && int >= 0 then
+                    update (ClickPrefecture int) model
+                else
+                    ( model, Cmd.none )
+            else
+                ( model, Cmd.none )
+
+        Tick time ->
+            if time - model.timeTouchedMap > 300 then
+                { model | toggleSingleFingerMove = True } ! []
+            else
+                model ! []
+
+        MultiStart int event ->
+            let
+                eventPositions =
+                    Dict.values <| Touch.touches event
+
+                oldPositions =
+                    model.positionOfMultiTouch
+
+                oldDistance =
+                    model.distanceOfMultiTouch
+
+                positions =
+                    case eventPositions of
+                        [ c ] ->
+                            { x = c.clientX, y = c.clientY }
+
+                        _ ->
+                            oldPositions
+
+                distance =
+                    case eventPositions of
+                        [ c1, c2 ] ->
+                            sqrt ((c2.clientX - c1.clientX) ^ 2 + (c2.clientY - c1.clientY) ^ 2)
+
+                        _ ->
+                            oldDistance
+
+                fingers =
+                    case List.length eventPositions of
+                        2 ->
+                            Model.Two
+
+                        _ ->
+                            Model.One
+            in
+            update (SingleStart int event)
+                { model
+                    | positionOfMultiTouch = positions
+                    , distanceOfMultiTouch = distance
+                    , fingers = fingers
+                }
+
+        MultiMove event ->
+            let
+                eventPositions =
+                    Dict.values <| Touch.changedTouches event
+            in
+            case model.fingers of
+                Model.Two ->
+                    update (Zooming event eventPositions) model
+
+                Model.One ->
+                    update (Moving event eventPositions) model
+
+        Zooming event eventPositions ->
+            let
+                oldDistance =
+                    model.distanceOfMultiTouch
+
+                distance =
+                    case eventPositions of
+                        [ c1, c2 ] ->
+                            sqrt ((c2.clientX - c1.clientX) ^ 2 + (c2.clientY - c1.clientY) ^ 2)
+
+                        _ ->
+                            oldDistance
+
+                newZoom =
+                    ((oldDistance - distance) * 0.005)
+                        |> (-) model.mapZoom
+                        |> clamp 1 2
+            in
+            { model | distanceOfMultiTouch = distance, mapZoom = newZoom } ! []
+
+        Moving event eventPositions ->
+            let
+                oldPositions =
+                    model.positionOfMultiTouch
+
+                positions =
+                    case eventPositions of
+                        [ c ] ->
+                            { x = c.clientX, y = c.clientY }
+
+                        _ ->
+                            oldPositions
+
+                pos =
+                    model.mapPosition
+
+                ( dx, dy ) =
+                    ( positions.x - oldPositions.x, positions.y - oldPositions.y )
+
+                newX =
+                    (pos.x + dx) |> clamp -300 300
+
+                newY =
+                    (pos.y + dy) |> clamp -250 250
+            in
+            { model
+                | positionOfMultiTouch = positions
+                , mapPosition = Debug.log "map" { x = newX, y = newY }
+            }
+                ! []
+
+        Resize size ->
+            { model | device = Element.classifyDevice size } ! []
 
 
 easing : Animation.Interpolation

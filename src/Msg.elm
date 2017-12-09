@@ -10,6 +10,8 @@ import Mouse
 import Navigation
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
+import Time exposing (Time)
+import Touch
 import Window exposing (Size)
 
 
@@ -46,5 +48,14 @@ type Msg
     | MapZoom Float
     | OnDragBy Draggable.Delta
     | DragMsg (Draggable.Msg String)
+    | TimeTouchedMap Float
+    | TimeLeftMap Int Touch.Event Float
+    | Tick Time
+    | SingleStart Int Touch.Event
+    | SingleEnd Int Touch.Event
+    | MultiStart Int Touch.Event
+    | MultiMove Touch.Event
+    | Zooming Touch.Event (List Touch.Coordinates)
+    | Moving Touch.Event (List Touch.Coordinates)
     | Animate Animation.Msg
-    | WindowWidth Size
+    | Resize Window.Size

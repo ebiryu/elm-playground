@@ -3,9 +3,11 @@ module Model exposing (..)
 import Animation exposing (px)
 import Date exposing (Date)
 import Draggable
+import Element
 import Mouse
 import RemoteData exposing (WebData)
 import Search.DatePickerUpdate as DatePicker
+import Time exposing (Time)
 
 
 type alias Model =
@@ -41,7 +43,13 @@ type alias Model =
     , mapPosition : MapPosition
     , mapZoom : Float
     , drag : Draggable.State String
-    , windowWidth : Int
+    , positionOfMultiTouch : MapPosition
+    , distanceOfMultiTouch : Float
+    , timeTouchedMap : Time
+    , toggleSingleFingerMove : Bool
+    , singleFingerCoordinate : MapPosition
+    , fingers : Finger
+    , device : Element.Device
     }
 
 
@@ -139,6 +147,11 @@ type alias MapPosition =
     { x : Float
     , y : Float
     }
+
+
+type Finger
+    = One
+    | Two
 
 
 initDrawerPosition : Animation.State

@@ -25,6 +25,7 @@
         "mdgriffith/elm-style-animation": "3.5.5 <= v < 4.0.0",
         "mdgriffith/style-elements": "4.2.1 <= v < 5.0.0",
         "miyamoen/elm-todofuken": "1.0.1 <= v < 2.0.0",
+        "mpizenberg/elm-touch-events": "3.0.1 <= v < 4.0.0",
         "rluiten/elm-date-extra": "9.2.1 <= v < 10.0.0",
         "zaboco/elm-draggable": "3.1.0 <= v < 4.0.0"
     },
