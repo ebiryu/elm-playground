@@ -17,6 +17,7 @@ import Search.Map as Map
 import Style
 import Style.Border as Border
 import Style.Color as Color
+import Style.Font as Font
 import Style.Shadow as Shadow
 import Todofuken
 
@@ -29,6 +30,8 @@ type MyStyle
     | Date
     | Map
     | Submit
+    | BoxTitle
+    | BoxMain
 
 
 styleSheet : Model -> Style.StyleSheet MyStyle a
@@ -57,11 +60,13 @@ styleSheet model =
         , Style.style Map [ Shadow.inset { offset = ( 0, 0 ), size = 2, blur = 10, color = rgb 150 150 150 } ]
         , Style.style Submit
             [ Style.cursor "pointer"
-            , Color.border (rgb 160 160 160)
-            , Color.text (rgb 20 20 20)
-            , Border.all 3
-            , Border.rounded 2
+            , Color.background (rgb 255 87 34)
+            , Color.text (rgb 240 240 240)
+            , Border.rounded 24
+            , Shadow.box { offset = ( 1, 1 ), size = 0, blur = 3, color = rgb 150 150 150 }
             ]
+        , Style.style BoxTitle [ Font.size 14 ]
+        , Style.style BoxMain [ Font.size 24 ]
         ]
 
 
@@ -70,39 +75,50 @@ borderColor =
     rgb 230 230 230
 
 
+sfmvHeaderHeight : Float
+sfmvHeaderHeight =
+    48
+
+
+sfmvSearchHeight : Float
+sfmvSearchHeight =
+    210
+
+
 searchFromMapView : Model -> Html Msg
 searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
         [ Element.layout (styleSheet model) <|
             column None
-                [ EA.height (EA.percent 100) ]
-                [ el Header [ EA.height (EA.px 48) ] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
-                , el Map [ EA.height EA.fill ] (Element.html (Map.maps model))
+                [ EA.class "vh-100" ]
+                [ el Header [ EA.height (EA.px sfmvHeaderHeight) ] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
+                , el Map [ EA.height (EA.px (toFloat model.device.height - sfmvHeaderHeight - sfmvSearchHeight)) ] (Element.html (Map.maps model))
                 , el None
-                    [ EA.height (EA.px 200), center, EA.width (EA.px 360) ]
+                    [ EA.height (EA.px sfmvSearchHeight), center, EA.width (EA.px 360) ]
                     (column None
                         [ spacing 5 ]
                         [ row None
                             [ spacing 10, EA.padding 10 ]
                             [ column Deperture
                                 [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]
-                                [ Element.text "出発地"
-                                , todofuken model.depPrefNum
+                                [ el BoxTitle [] <| Element.text "出発地"
+                                , el BoxMain [] <| todofuken model.depPrefNum
                                 ]
                             , column Destination
                                 [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDestination ]
-                                [ Element.text "目的地"
-                                , todofuken model.destPrefNum
+                                [ el BoxTitle [] <| Element.text "目的地"
+                                , el BoxMain [] <| todofuken model.destPrefNum
                                 ]
                             ]
                         , row None
                             [ spacing 10, EA.padding 10, spread ]
                             [ column Date
                                 [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick (ToggleDatePicker CheckIn) ]
-                                [ Element.text "出発日"
-                                , Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
+                                [ el BoxTitle [] <| Element.text "出発日"
+                                , el BoxMain [] <| Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
                                 ]
-                            , el Submit [ EE.onClick SubmitSearch, alignBottom, EA.padding 10 ] (Element.text "検索")
+                            , el Submit [ EE.onClick SubmitSearch, alignBottom, EA.padding 10, EA.height (EA.px 46), EA.width (EA.px 46) ] <|
+                                Element.html (i [ class "material-icons md-24 pointer" ] [ text "search" ])
                             ]
                         ]
                     )
