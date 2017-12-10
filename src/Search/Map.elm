@@ -36,10 +36,9 @@ maps model =
         offset =
             "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
     in
-    Html.div [ MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
-        [ svg (List.concat [ svgSize model, [ viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ])
-            [ text_ [ x "0", y "20" ] [ text (Todofuken.fromCode model.hoveredPrefNum |> Maybe.map .name |> Maybe.withDefault "") ]
-            , g [ transform (panning ++ " " ++ zooming) ]
+    Html.div [ HtmlA.class "h-100", MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
+        [ svg [ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ]
+            [ g [ transform (panning ++ " " ++ zooming) ]
                 [ g [ transform offset ]
                     [ g [] (mapClick model)
                     , polygon [ borderStyle, fill "#fff", points "67.771,497.093 66.352,497.093 66.352,434.494 13.083,434.494 13.083,433.074 67.771,433.074 " ] []
@@ -51,10 +50,11 @@ maps model =
 
 svgSize : Model -> List (Svg.Attribute msg)
 svgSize { device } =
-    if device.phone then
-        [ width "100%", height "100%" ]
-    else
-        [ width "100%", height "500px" ]
+    let
+        h =
+            toString (device.height - 258) ++ "px"
+    in
+    [ width "100%", height "100%" ]
 
 
 mapClick : Model -> List (Svg Msg)

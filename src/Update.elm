@@ -12,6 +12,7 @@ import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import Search
 import Search.DatePickerUpdate as DatePicker
+import Search.View
 import Task
 import Time
 import Touch
@@ -165,13 +166,10 @@ update msg model =
             { model | buses = response } ! []
 
         SubmitSearch ->
-            ( model, Commands.fetchBuses model )
+            { model | animStyleOfMapDiv = mapSliceOut model.animStyleOfMapDiv, toggleResult = not model.toggleResult } ! [ Commands.fetchBuses model ]
 
-        Animate animMsg ->
-            { model
-                | drawerPosition = Animation.update animMsg model.drawerPosition
-            }
-                ! []
+        CloseResult ->
+            { model | animStyleOfMapDiv = mapSliceIn model model.animStyleOfMapDiv, toggleResult = not model.toggleResult } ! []
 
         ToggleMap ->
             { model | searchFromMapShow = not model.searchFromMapShow } ! []
@@ -371,6 +369,24 @@ update msg model =
         Resize size ->
             { model | device = Element.classifyDevice size } ! []
 
+        InitSize size ->
+            update InitAnimStyleOfMapDiv { model | device = Element.classifyDevice size }
+
+        InitAnimStyleOfMapDiv ->
+            { model
+                | animStyleOfMapDiv =
+                    Animation.style
+                        [ Animation.height (Animation.px (defaultMapHeight model)) ]
+            }
+                ! []
+
+        Animate animMsg ->
+            { model
+                | drawerPosition = Animation.update animMsg model.drawerPosition
+                , animStyleOfMapDiv = Animation.update animMsg model.animStyleOfMapDiv
+            }
+                ! []
+
 
 easing : Animation.Interpolation
 easing =
@@ -391,6 +407,21 @@ drawerSliceIn style =
 drawerSliceOut : Animation.State -> Animation.State
 drawerSliceOut style =
     Animation.queue [ Animation.set [ Animation.left (Animation.rem -16) ] ] style
+
+
+defaultMapHeight : Model -> Float
+defaultMapHeight model =
+    toFloat model.device.height - Search.View.sfmvHeaderHeight - Search.View.sfmvSearchHeight
+
+
+mapSliceOut : Animation.State -> Animation.State
+mapSliceOut style =
+    Animation.interrupt [ Animation.toWith easing [ Animation.height (Animation.px 0) ] ] style
+
+
+mapSliceIn : Model -> Animation.State -> Animation.State
+mapSliceIn model style =
+    Animation.interrupt [ Animation.toWith easing [ Animation.height (Animation.px (defaultMapHeight model)) ] ] style
 
 
 dragConfig : Draggable.Config String Msg

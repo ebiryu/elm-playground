@@ -38,6 +38,7 @@ type Msg
     | ToggleDatePicker DatePicker.Check
     | OnFetchBuses (WebData (List Model.Bus))
     | SubmitSearch
+    | CloseResult
     | ToggleMap
     | ClickPrefecture Int
     | HoverPrefecture Int
@@ -59,3 +60,5 @@ type Msg
     | Moving Touch.Event (List Touch.Coordinates)
     | Animate Animation.Msg
     | Resize Window.Size
+    | InitSize Window.Size
+    | InitAnimStyleOfMapDiv

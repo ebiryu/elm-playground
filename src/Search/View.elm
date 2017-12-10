@@ -1,6 +1,8 @@
-module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView)
+module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView, sfmvHeaderHeight, sfmvSearchHeight)
 
+import Animation
 import Color exposing (rgb)
+import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
 import Element exposing (column, el, row)
@@ -11,12 +13,14 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
+import RemoteData
 import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(CheckIn, CheckOut))
 import Search.Map as Map
 import Style
 import Style.Border as Border
 import Style.Color as Color
+import Style.Font as Font
 import Style.Shadow as Shadow
 import Todofuken
 
@@ -29,6 +33,9 @@ type MyStyle
     | Date
     | Map
     | Submit
+    | BoxTitle
+    | BoxMain
+    | SearchBox
 
 
 styleSheet : Model -> Style.StyleSheet MyStyle a
@@ -57,11 +64,14 @@ styleSheet model =
         , Style.style Map [ Shadow.inset { offset = ( 0, 0 ), size = 2, blur = 10, color = rgb 150 150 150 } ]
         , Style.style Submit
             [ Style.cursor "pointer"
-            , Color.border (rgb 160 160 160)
-            , Color.text (rgb 20 20 20)
-            , Border.all 3
-            , Border.rounded 2
+            , Color.background (rgb 255 87 34)
+            , Color.text (rgb 240 240 240)
+            , Border.rounded 24
+            , Shadow.box { offset = ( 1, 1 ), size = 1, blur = 5, color = rgb 150 150 150 }
             ]
+        , Style.style BoxTitle [ Font.size 14 ]
+        , Style.style BoxMain [ Font.size 24 ]
+        , Style.style SearchBox [ Shadow.box { offset = ( 0, 1 ), size = 1, blur = 5, color = rgb 150 150 150 } ]
         ]
 
 
@@ -70,42 +80,84 @@ borderColor =
     rgb 230 230 230
 
 
+sfmvHeaderHeight : Float
+sfmvHeaderHeight =
+    48
+
+
+sfmvSearchHeight : Float
+sfmvSearchHeight =
+    210
+
+
+renderAnim : Animation.State -> List (Element.Attribute variation Msg) -> List (Element.Attribute variation Msg)
+renderAnim animStyle otherAttrs =
+    (List.map EA.toAttr <| Animation.render animStyle) ++ otherAttrs
+
+
 searchFromMapView : Model -> Html Msg
 searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
         [ Element.layout (styleSheet model) <|
             column None
-                [ EA.height (EA.percent 100) ]
-                [ el Header [ EA.height (EA.px 48) ] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
-                , el Map [ EA.height EA.fill ] (Element.html (Map.maps model))
-                , el None
-                    [ EA.height (EA.px 200), center, EA.width (EA.px 360) ]
-                    (column None
-                        [ spacing 5 ]
-                        [ row None
-                            [ spacing 10, EA.padding 10 ]
-                            [ column Deperture
-                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]
-                                [ Element.text "出発地"
-                                , todofuken model.depPrefNum
+                [ EA.width (EA.percent 100), EA.class "vh-100" ]
+                [ el Header [ EA.height (EA.px sfmvHeaderHeight) ] <|
+                    Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
+                , el Map
+                    (renderAnim model.animStyleOfMapDiv [])
+                    (Element.html (Map.maps model))
+                , el SearchBox
+                    [ EA.height (EA.px sfmvSearchHeight), EA.width (EA.percent 100) ]
+                    (el None
+                        [ center ]
+                        (column None
+                            [ EA.width (EA.px 360), spacing 5 ]
+                            [ row None
+                                [ spacing 10, EA.padding 10 ]
+                                [ column Deperture
+                                    [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]
+                                    [ el BoxTitle [] <| Element.text "出発地"
+                                    , el BoxMain [] <| todofuken model.depPrefNum
+                                    ]
+                                , column Destination
+                                    [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDestination ]
+                                    [ el BoxTitle [] <| Element.text "目的地"
+                                    , el BoxMain [] <| todofuken model.destPrefNum
+                                    ]
                                 ]
-                            , column Destination
-                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDestination ]
-                                [ Element.text "目的地"
-                                , todofuken model.destPrefNum
+                            , row None
+                                [ spacing 10, EA.padding 10, spread ]
+                                [ column Date
+                                    [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick (ToggleDatePicker CheckIn) ]
+                                    [ el BoxTitle [] <| Element.text "出発日"
+                                    , el BoxMain [] <| Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
+                                    ]
+                                , el Submit
+                                    [ if model.toggleResult then
+                                        EE.onClick CloseResult
+                                      else
+                                        EE.onClick SubmitSearch
+                                    , alignBottom
+                                    , EA.padding 10
+                                    , EA.height (EA.px 42)
+                                    , EA.width (EA.px 42)
+                                    ]
+                                  <|
+                                    Element.html
+                                        (i [ class "material-icons md-24 pointer" ]
+                                            (if model.toggleResult then
+                                                [ text "expand_more" ]
+                                             else
+                                                [ text "search" ]
+                                            )
+                                        )
                                 ]
                             ]
-                        , row None
-                            [ spacing 10, EA.padding 10, spread ]
-                            [ column Date
-                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick (ToggleDatePicker CheckIn) ]
-                                [ Element.text "出発日"
-                                , Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
-                                ]
-                            , el Submit [ EE.onClick SubmitSearch, alignBottom, EA.padding 10 ] (Element.text "検索")
-                            ]
-                        ]
+                        )
                     )
+                , el None
+                    [ EA.height (EA.px sfmvSearchHeight), EA.width (EA.percent 100) ]
+                    (el None [ EA.width (EA.px 360), center, EA.class "overflow-y-scroll" ] <| Element.html <| searchResultBusList model)
                 ]
         , if model.datePickerShow then
             Search.DatePicker.view model.datePickerModel
@@ -117,6 +169,71 @@ searchFromMapView model =
 todofuken : Int -> Element.Element MyStyle a msg
 todofuken code =
     Element.text (Todofuken.fromCode code |> Maybe.map .name |> Maybe.withDefault " ")
+
+
+searchResultBusList : Model -> Html Msg
+searchResultBusList model =
+    case model.buses of
+        RemoteData.NotAsked ->
+            div [] []
+
+        RemoteData.Loading ->
+            div [] [ text "Now loading ..." ]
+
+        RemoteData.Success buses ->
+            let
+                list bus =
+                    div [ class "pa3 ma3 hover-bg-black-10 shadow-1" ]
+                        [ div [ class "f3" ] [ text bus.companyName ]
+                        , div [] [ text bus.name ]
+                        , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ bus.vacancy ]
+                        , div [ class "mt2" ]
+                            [ div [ class "dib" ]
+                                [ div [] [ text bus.depCity ]
+                                , div []
+                                    [ text <|
+                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
+                                            Result.withDefault model.dateCheckIn <|
+                                                Date.fromString bus.depTime
+                                    ]
+                                ]
+                            , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
+                            , div [ class "dib" ]
+                                [ div [] [ text bus.destCity ]
+                                , div []
+                                    [ text <|
+                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
+                                            Result.withDefault model.dateCheckIn <|
+                                                Date.fromString bus.destTime
+                                    ]
+                                ]
+                            ]
+                        , div [] (List.map showCityAndTime (organizeCities bus.depTime))
+                        ]
+            in
+            div [ class "mt3" ] (List.map list buses)
+
+        RemoteData.Failure error ->
+            div [] []
+
+
+organizeCities : String -> List ( String, String )
+organizeCities str =
+    str
+        |> String.dropLeft 2
+        |> String.dropRight 2
+        |> String.split "], ["
+        |> List.map
+            (\s ->
+                ( Maybe.withDefault "" <| List.head <| String.split "," s
+                , Maybe.withDefault "" <| List.head <| Maybe.withDefault [] <| List.tail <| String.split "," s
+                )
+            )
+
+
+showCityAndTime : ( String, String ) -> Html msg
+showCityAndTime ( city, time ) =
+    div [ class "dib" ] [ text city, br [] [], text time ]
 
 
 searchFormView : Model -> Html Msg

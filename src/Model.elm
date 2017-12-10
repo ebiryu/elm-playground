@@ -49,6 +49,8 @@ type alias Model =
     , toggleSingleFingerMove : Bool
     , singleFingerCoordinate : MapPosition
     , fingers : Finger
+    , toggleResult : Bool
+    , animStyleOfMapDiv : Animation.State
     , device : Element.Device
     }
 
@@ -152,6 +154,12 @@ type alias MapPosition =
 type Finger
     = One
     | Two
+
+
+initAnimStyleOfMapDiv : Animation.State
+initAnimStyleOfMapDiv =
+    Animation.style
+        [ Animation.height (Animation.px 0) ]
 
 
 initDrawerPosition : Animation.State
