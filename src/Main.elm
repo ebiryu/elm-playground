@@ -83,7 +83,7 @@ init location =
 
           -- , Commands.fetchCityList
           , Task.perform DateNow Date.now
-          , Task.perform Resize Window.size
+          , Task.perform InitSize Window.size
           ]
 
 

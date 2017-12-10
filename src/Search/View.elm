@@ -2,6 +2,7 @@ module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapVie
 
 import Animation
 import Color exposing (rgb)
+import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
 import Element exposing (column, el, row)
@@ -12,6 +13,7 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
+import RemoteData
 import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(CheckIn, CheckOut))
 import Search.Map as Map
@@ -153,6 +155,9 @@ searchFromMapView model =
                             ]
                         )
                     )
+                , el None
+                    [ EA.height (EA.px sfmvSearchHeight), EA.width (EA.percent 100) ]
+                    (el None [ EA.width (EA.px 360), center, EA.class "overflow-y-scroll" ] <| Element.html <| searchResultBusList model)
                 ]
         , if model.datePickerShow then
             Search.DatePicker.view model.datePickerModel
@@ -164,6 +169,71 @@ searchFromMapView model =
 todofuken : Int -> Element.Element MyStyle a msg
 todofuken code =
     Element.text (Todofuken.fromCode code |> Maybe.map .name |> Maybe.withDefault " ")
+
+
+searchResultBusList : Model -> Html Msg
+searchResultBusList model =
+    case model.buses of
+        RemoteData.NotAsked ->
+            div [] []
+
+        RemoteData.Loading ->
+            div [] [ text "Now loading ..." ]
+
+        RemoteData.Success buses ->
+            let
+                list bus =
+                    div [ class "pa3 ma3 hover-bg-black-10 shadow-1" ]
+                        [ div [ class "f3" ] [ text bus.companyName ]
+                        , div [] [ text bus.name ]
+                        , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ bus.vacancy ]
+                        , div [ class "mt2" ]
+                            [ div [ class "dib" ]
+                                [ div [] [ text bus.depCity ]
+                                , div []
+                                    [ text <|
+                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
+                                            Result.withDefault model.dateCheckIn <|
+                                                Date.fromString bus.depTime
+                                    ]
+                                ]
+                            , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
+                            , div [ class "dib" ]
+                                [ div [] [ text bus.destCity ]
+                                , div []
+                                    [ text <|
+                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
+                                            Result.withDefault model.dateCheckIn <|
+                                                Date.fromString bus.destTime
+                                    ]
+                                ]
+                            ]
+                        , div [] (List.map showCityAndTime (organizeCities bus.depTime))
+                        ]
+            in
+            div [ class "mt3" ] (List.map list buses)
+
+        RemoteData.Failure error ->
+            div [] []
+
+
+organizeCities : String -> List ( String, String )
+organizeCities str =
+    str
+        |> String.dropLeft 2
+        |> String.dropRight 2
+        |> String.split "], ["
+        |> List.map
+            (\s ->
+                ( Maybe.withDefault "" <| List.head <| String.split "," s
+                , Maybe.withDefault "" <| List.head <| Maybe.withDefault [] <| List.tail <| String.split "," s
+                )
+            )
+
+
+showCityAndTime : ( String, String ) -> Html msg
+showCityAndTime ( city, time ) =
+    div [ class "dib" ] [ text city, br [] [], text time ]
 
 
 searchFormView : Model -> Html Msg

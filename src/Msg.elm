@@ -60,4 +60,5 @@ type Msg
     | Moving Touch.Event (List Touch.Coordinates)
     | Animate Animation.Msg
     | Resize Window.Size
+    | InitSize Window.Size
     | InitAnimStyleOfMapDiv

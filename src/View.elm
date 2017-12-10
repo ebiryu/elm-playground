@@ -161,7 +161,6 @@ homeMinimalView model =
                 , div [ class "ml-auto mv2 pa2 tc w3 bg-near-white br2 pointer", onClick SubmitSearch ] [ text "検索" ]
                 ]
             , div [ class "db br2 shadow-1 pa2 ma2 pointer", onClick ToggleMap ] [ text "show map" ]
-            , searchResultBusList model
             ]
         ]
 
@@ -175,71 +174,6 @@ searchPlaceButton string city depDest =
             , text city.city
             ]
         ]
-
-
-searchResultBusList : Model -> Html Msg
-searchResultBusList model =
-    case model.buses of
-        RemoteData.NotAsked ->
-            div [] []
-
-        RemoteData.Loading ->
-            div [] [ text "Now loading ..." ]
-
-        RemoteData.Success buses ->
-            let
-                list bus =
-                    div [ class "ba b--silver br3 pa3 mv3 hover-bg-black-10" ]
-                        [ div [ class "f3" ] [ text bus.companyName ]
-                        , div [] [ text bus.name ]
-                        , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ bus.vacancy ]
-                        , div [ class "mt2" ]
-                            [ div [ class "dib" ]
-                                [ div [] [ text bus.depCity ]
-                                , div []
-                                    [ text <|
-                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
-                                            Result.withDefault model.dateCheckIn <|
-                                                Date.fromString bus.depTime
-                                    ]
-                                ]
-                            , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
-                            , div [ class "dib" ]
-                                [ div [] [ text bus.destCity ]
-                                , div []
-                                    [ text <|
-                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
-                                            Result.withDefault model.dateCheckIn <|
-                                                Date.fromString bus.destTime
-                                    ]
-                                ]
-                            ]
-                        , div [] (List.map showCityAndTime (organizeCities bus.depTime))
-                        ]
-            in
-            div [ class "mt3 navy" ] (List.map list buses)
-
-        RemoteData.Failure error ->
-            div [] []
-
-
-organizeCities : String -> List ( String, String )
-organizeCities str =
-    str
-        |> String.dropLeft 2
-        |> String.dropRight 2
-        |> String.split "], ["
-        |> List.map
-            (\s ->
-                ( Maybe.withDefault "" <| List.head <| String.split "," s
-                , Maybe.withDefault "" <| List.head <| Maybe.withDefault [] <| List.tail <| String.split "," s
-                )
-            )
-
-
-showCityAndTime : ( String, String ) -> Html msg
-showCityAndTime ( city, time ) =
-    div [ class "dib" ] [ text city, br [] [], text time ]
 
 
 historyView : Model -> Html Msg

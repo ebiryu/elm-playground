@@ -367,6 +367,9 @@ update msg model =
                 ! []
 
         Resize size ->
+            { model | device = Element.classifyDevice size } ! []
+
+        InitSize size ->
             update InitAnimStyleOfMapDiv { model | device = Element.classifyDevice size }
 
         InitAnimStyleOfMapDiv ->
