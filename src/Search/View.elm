@@ -156,8 +156,8 @@ searchFromMapView model =
                         )
                     )
                 , el None
-                    [ EA.height (EA.px sfmvSearchHeight), EA.width (EA.percent 100) ]
-                    (el None [ EA.width (EA.px 360), center, EA.class "overflow-y-scroll" ] <| Element.html <| searchResultBusList model)
+                    [ EA.width (EA.percent 100), EA.class "overflow-y-scroll" ]
+                    (el None [ center, EA.width (EA.px 360) ] <| Element.html <| searchResultBusList model)
                 ]
         , if model.datePickerShow then
             Search.DatePicker.view model.datePickerModel
