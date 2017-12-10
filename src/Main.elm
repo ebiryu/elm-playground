@@ -12,6 +12,7 @@ import Msg exposing (Msg(..))
 import Navigation
 import RemoteData
 import Search.DatePickerUpdate as DatePicker
+import Search.View as SearchView
 import Task
 import Time
 import Update exposing (update)
@@ -74,6 +75,8 @@ init location =
     , toggleSingleFingerMove = False
     , singleFingerCoordinate = { x = 0, y = 0 }
     , fingers = Model.One
+    , toggleResult = False
+    , animStyleOfMapDiv = Model.initAnimStyleOfMapDiv
     , device = { width = 0, height = 0, phone = False, tablet = False, desktop = False, bigDesktop = False, portrait = False }
     }
         ! [ fetchPlaces
@@ -93,6 +96,7 @@ subscriptions model =
     Sub.batch
         [ Animation.subscription Animate
             [ model.drawerPosition
+            , model.animStyleOfMapDiv
             ]
         , Window.resizes Resize
         , Draggable.subscriptions DragMsg model.drag

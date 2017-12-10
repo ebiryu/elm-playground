@@ -1,5 +1,6 @@
-module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView)
+module Search.View exposing (howManyPeopleView, searchFormView, searchFromMapView, sfmvHeaderHeight, sfmvSearchHeight)
 
+import Animation
 import Color exposing (rgb)
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
@@ -32,6 +33,7 @@ type MyStyle
     | Submit
     | BoxTitle
     | BoxMain
+    | SearchBox
 
 
 styleSheet : Model -> Style.StyleSheet MyStyle a
@@ -63,10 +65,11 @@ styleSheet model =
             , Color.background (rgb 255 87 34)
             , Color.text (rgb 240 240 240)
             , Border.rounded 24
-            , Shadow.box { offset = ( 1, 1 ), size = 0, blur = 3, color = rgb 150 150 150 }
+            , Shadow.box { offset = ( 1, 1 ), size = 1, blur = 5, color = rgb 150 150 150 }
             ]
         , Style.style BoxTitle [ Font.size 14 ]
         , Style.style BoxMain [ Font.size 24 ]
+        , Style.style SearchBox [ Shadow.box { offset = ( 0, 1 ), size = 1, blur = 5, color = rgb 150 150 150 } ]
         ]
 
 
@@ -85,42 +88,70 @@ sfmvSearchHeight =
     210
 
 
+renderAnim : Animation.State -> List (Element.Attribute variation Msg) -> List (Element.Attribute variation Msg)
+renderAnim animStyle otherAttrs =
+    (List.map EA.toAttr <| Animation.render animStyle) ++ otherAttrs
+
+
 searchFromMapView : Model -> Html Msg
 searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
         [ Element.layout (styleSheet model) <|
             column None
-                [ EA.class "vh-100" ]
-                [ el Header [ EA.height (EA.px sfmvHeaderHeight) ] <| Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
-                , el Map [ EA.height (EA.px (toFloat model.device.height - sfmvHeaderHeight - sfmvSearchHeight)) ] (Element.html (Map.maps model))
-                , el None
-                    [ EA.height (EA.px sfmvSearchHeight), center, EA.width (EA.px 360) ]
-                    (column None
-                        [ spacing 5 ]
-                        [ row None
-                            [ spacing 10, EA.padding 10 ]
-                            [ column Deperture
-                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]
-                                [ el BoxTitle [] <| Element.text "出発地"
-                                , el BoxMain [] <| todofuken model.depPrefNum
+                [ EA.width (EA.percent 100), EA.class "vh-100" ]
+                [ el Header [ EA.height (EA.px sfmvHeaderHeight) ] <|
+                    Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
+                , el Map
+                    (renderAnim model.animStyleOfMapDiv [])
+                    (Element.html (Map.maps model))
+                , el SearchBox
+                    [ EA.height (EA.px sfmvSearchHeight), EA.width (EA.percent 100) ]
+                    (el None
+                        [ center ]
+                        (column None
+                            [ EA.width (EA.px 360), spacing 5 ]
+                            [ row None
+                                [ spacing 10, EA.padding 10 ]
+                                [ column Deperture
+                                    [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDeperture ]
+                                    [ el BoxTitle [] <| Element.text "出発地"
+                                    , el BoxMain [] <| todofuken model.depPrefNum
+                                    ]
+                                , column Destination
+                                    [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDestination ]
+                                    [ el BoxTitle [] <| Element.text "目的地"
+                                    , el BoxMain [] <| todofuken model.destPrefNum
+                                    ]
                                 ]
-                            , column Destination
-                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick ClickDestination ]
-                                [ el BoxTitle [] <| Element.text "目的地"
-                                , el BoxMain [] <| todofuken model.destPrefNum
+                            , row None
+                                [ spacing 10, EA.padding 10, spread ]
+                                [ column Date
+                                    [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick (ToggleDatePicker CheckIn) ]
+                                    [ el BoxTitle [] <| Element.text "出発日"
+                                    , el BoxMain [] <| Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
+                                    ]
+                                , el Submit
+                                    [ if model.toggleResult then
+                                        EE.onClick CloseResult
+                                      else
+                                        EE.onClick SubmitSearch
+                                    , alignBottom
+                                    , EA.padding 10
+                                    , EA.height (EA.px 42)
+                                    , EA.width (EA.px 42)
+                                    ]
+                                  <|
+                                    Element.html
+                                        (i [ class "material-icons md-24 pointer" ]
+                                            (if model.toggleResult then
+                                                [ text "expand_more" ]
+                                             else
+                                                [ text "search" ]
+                                            )
+                                        )
                                 ]
                             ]
-                        , row None
-                            [ spacing 10, EA.padding 10, spread ]
-                            [ column Date
-                                [ EA.width (EA.percent 50), spacing 10, EA.padding 10, EE.onClick (ToggleDatePicker CheckIn) ]
-                                [ el BoxTitle [] <| Element.text "出発日"
-                                , el BoxMain [] <| Element.text (DateFormat.format config "%b/%-d (%a)" model.dateCheckIn)
-                                ]
-                            , el Submit [ EE.onClick SubmitSearch, alignBottom, EA.padding 10, EA.height (EA.px 46), EA.width (EA.px 46) ] <|
-                                Element.html (i [ class "material-icons md-24 pointer" ] [ text "search" ])
-                            ]
-                        ]
+                        )
                     )
                 ]
         , if model.datePickerShow then

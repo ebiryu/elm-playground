@@ -37,7 +37,7 @@ maps model =
             "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
     in
     Html.div [ HtmlA.class "h-100", MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
-        [ svg (List.concat [ svgSize model, [ viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ])
+        [ svg [ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ]
             [ g [ transform (panning ++ " " ++ zooming) ]
                 [ g [ transform offset ]
                     [ g [] (mapClick model)
