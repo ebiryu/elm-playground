@@ -1,5 +1,6 @@
 module Search.Map exposing (..)
 
+import Animation
 import Draggable
 import Element
 import Html
@@ -37,7 +38,7 @@ maps model =
             "translate(" ++ toString (-halfWidth * model.mapZoom) ++ ", " ++ toString (-halfHeight * model.mapZoom) ++ ")"
     in
     Html.div [ HtmlA.class "h-100", MultiTouch.onStart (Msg.MultiStart 50), MultiTouch.onMove Msg.MultiMove ]
-        [ svg [ width "100%", height "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ]
+        [ svg (List.concat [ Animation.render model.animStyleOfMapDiv, [ height "100%", width "100%", viewBox "0 0 600 500", Draggable.mouseTrigger "" Msg.DragMsg, onScroll Msg.MapZoom ] ])
             [ g [ transform (panning ++ " " ++ zooming) ]
                 [ g [ transform offset ]
                     [ g [] (mapClick model)
