@@ -187,28 +187,9 @@ searchResultBusList model =
                         [ div [ class "f3" ] [ text bus.companyName ]
                         , div [] [ text bus.name ]
                         , div [] [ text <| "￥" ++ toString bus.amount, text <| " 空席 :" ++ bus.vacancy ]
-                        , div [ class "mt2" ]
-                            [ div [ class "dib" ]
-                                [ div [] [ text bus.depCity ]
-                                , div []
-                                    [ text <|
-                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
-                                            Result.withDefault model.dateCheckIn <|
-                                                Date.fromString bus.depTime
-                                    ]
-                                ]
-                            , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
-                            , div [ class "dib" ]
-                                [ div [] [ text bus.destCity ]
-                                , div []
-                                    [ text <|
-                                        DateFormat.formatOffset config -540 "%b/%-d (%a) %k:%M" <|
-                                            Result.withDefault model.dateCheckIn <|
-                                                Date.fromString bus.destTime
-                                    ]
-                                ]
-                            ]
                         , div [] (List.map showCityAndTime (organizeCities bus.depTime))
+                        , div [ class "dib" ] [ i [ class "material-icons" ] [ text "navigate_next" ] ]
+                        , div [ class "dib" ] (List.map showCityAndTime (organizeCities bus.destTime))
                         ]
             in
             div [ class "mt3" ] (List.map list buses)
