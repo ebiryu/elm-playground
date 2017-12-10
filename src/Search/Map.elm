@@ -2,19 +2,15 @@ module Search.Map exposing (..)
 
 import Animation
 import Draggable
-import Element
 import Html
 import Html.Attributes as HtmlA
 import Json.Decode as Decode
 import Model exposing (Model)
 import Msg exposing (Msg)
 import MultiTouch
-import SingleTouch
-import Style
 import Svg exposing (..)
 import Svg.Attributes exposing (d, fill, height, points, scale, stroke, style, transform, viewBox, width, x, y)
 import Svg.Events exposing (on, onClick, onMouseOut, onMouseOver)
-import Todofuken
 import Touch
 import VirtualDom
 
