@@ -9,6 +9,7 @@ import Json.Decode.Pipeline exposing (decode, required)
 import Model exposing (City, Place, PlaceId)
 import Msg exposing (Msg)
 import RemoteData
+import Todofuken
 import Url
 
 
@@ -43,7 +44,14 @@ fetchBuses model =
 busUrlWithQuery : Model.Model -> String
 busUrlWithQuery model =
     -- Url.fetchBusUrl
-    Url.fetchBusUrl ++ "?" ++ "dep_date=" ++ DateFormat.format config "%Y-%b-%-d" model.dateCheckIn
+    Url.fetchBusUrl
+        ++ "?"
+        ++ "dep_date="
+        ++ DateFormat.format config "%Y-%b-%-d" model.dateCheckIn
+        ++ "&dep_pref="
+        ++ (Todofuken.fromCode model.depPrefNum |> Maybe.map .name |> Maybe.withDefault "")
+        ++ "&dest_pref="
+        ++ (Todofuken.fromCode model.destPrefNum |> Maybe.map .name |> Maybe.withDefault "")
 
 
 busesDecoder : Decode.Decoder (List Model.Bus)
