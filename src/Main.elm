@@ -5,14 +5,12 @@ import Commands exposing (fetchPlaces)
 import Date
 import Date.Extra.Create exposing (dateFromFields)
 import Draggable
-import Element
 import Model exposing (Model, Route(..))
 import Mouse
 import Msg exposing (Msg(..))
 import Navigation
 import RemoteData
 import Search.DatePickerUpdate as DatePicker
-import Search.View as SearchView
 import Task
 import Time
 import Update exposing (update)

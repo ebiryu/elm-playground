@@ -3,7 +3,6 @@ module View exposing (..)
 -- import MapboxAccessToken exposing (mapboxToken)
 
 import Animation
-import Date
 import Date.Extra.Config.Config_ja_jp exposing (config)
 import Date.Extra.Format as DateFormat
 import Html exposing (..)
@@ -12,7 +11,6 @@ import Html.Events exposing (..)
 import Model exposing (Model, Route(..))
 import Msg exposing (Msg(..))
 import RemoteData
-import Search.DatePicker
 import Search.DatePickerUpdate exposing (Check(..))
 import Search.View as Search
 
