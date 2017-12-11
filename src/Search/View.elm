@@ -100,7 +100,7 @@ searchFromMapView model =
     div [ class "absolute absolute--fill bg-white fixed z2" ]
         [ Element.layout (styleSheet model) <|
             column None
-                [ EA.width (EA.percent 100), EA.class "vh-100" ]
+                [ EA.width (EA.percent 100), EA.height (EA.px <| toFloat model.device.height) ]
                 [ el Header [ EA.height (EA.px sfmvHeaderHeight) ] <|
                     Element.html (i [ class "material-icons md-48 pointer", onClick ToggleMap ] [ text "navigate_before" ])
                 , el Map
