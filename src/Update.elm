@@ -411,10 +411,7 @@ drawerSliceOut style =
 
 defaultMapHeight : Model -> Float
 defaultMapHeight model =
-    if model.device.phone then
-        toFloat model.device.height - Search.View.sfmvHeaderHeight * 2 - Search.View.sfmvSearchHeight
-    else
-        toFloat model.device.height - Search.View.sfmvHeaderHeight - Search.View.sfmvSearchHeight
+    toFloat model.device.height - Search.View.sfmvHeaderHeight - Search.View.sfmvSearchHeight
 
 
 mapSliceOut : Animation.State -> Animation.State
