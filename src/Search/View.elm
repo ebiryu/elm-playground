@@ -97,7 +97,7 @@ renderAnim animStyle otherAttrs =
 
 searchFromMapView : Model -> Html Msg
 searchFromMapView model =
-    div [ class "absolute absolute--fill bg-white fixed z2" ]
+    div [ class "absolute absolute--fill bg-white z2" ]
         [ Element.layout (styleSheet model) <|
             column None
                 [ EA.width (EA.percent 100), EA.height (EA.px <| toFloat model.device.height) ]
